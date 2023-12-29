@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품</title>
+</head>
+<body>
+
+<form action="">
+
+  <label for="cardPayment">신용카드 결제</label>
+  <input type="radio" id="cardPayment" name="paymentOption" value="cardPayment" checked>
+
+  <label for="kakaoPay">카카오 페이</label>
+  <input type="radio"name="paymentOption"  value="kakaoPay" id="kakaoPay">
+
+  <label for="naverPay">네이버 페이</label>
+  <input type="radio" name="paymentOption"  value="naverPay" id="naverPay">
+
+  <button type="submit">결제하기</button>
+
+</form>
+
+</body>
+</html>
