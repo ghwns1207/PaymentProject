@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+
+<head>
+    <title>Nicepay spring-boot</title>
+    <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://pay.nicepay.co.kr/v1/js/"></script>
+    <script>
+    function serverAuthEvent() {
+      AUTHNICE.requestPay({
+        clientId: '[[${clientId}]]',
+        method: 'card',
+        orderId: '[[${orderId}]]',
+        amount: 1111,
+        goodsName: '테스트-상품',
+        returnUrl: 'http://localhost:8080/serverAuth',
+        fnError: function (result) {
+          console.log('개발자확인용 : ' + result.errorMsg + '')
+        }
+      });
+    }
+  </script>
+</head>
+
+<body>
+<h1>NICEPAY TEST</h1>
+<button onclick="serverAuthEvent()">serverAuth 결제하기</button>
+
+</body>
+
+</html>
