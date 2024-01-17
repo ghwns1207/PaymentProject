@@ -6,9 +6,6 @@
 //
 //public class CaptchaUtil {
 //
-//  private final int HEIGHT = 200;
-//
-//  private final int WIDTH = 50;
 //
 //  public void captcaImg(HttpServletRequest request, HttpServletResponse response) {
 //    Captcha captcha = new Captcha.Builder(200, 60)
