@@ -8,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://pay.nicepay.co.kr/v1/js/"></script>
     <script>
-    function serverAuthEvent() {
+    function serverAuth() {
       AUTHNICE.requestPay({
         clientId: '[[${clientId}]]',
         method: 'card',
         orderId: '[[${orderId}]]',
-        amount: 1111,
-        goodsName: '테스트-상품',
+        amount: 1004,
+        goodsName: '나이스페이-상품',
         returnUrl: 'http://localhost:8080/serverAuth',
         fnError: function (result) {
           console.log('개발자확인용 : ' + result.errorMsg + '')
@@ -26,7 +26,7 @@
 
 <body>
 <h1>NICEPAY TEST</h1>
-<button onclick="serverAuthEvent()">serverAuth 결제하기</button>
+<button onclick="serverAuth()">serverAuth 결제하기</button>
 
 </body>
 

@@ -26,6 +26,8 @@ dependencies {
 	implementation 'org.webjars.npm:axios:0.21.4'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'nl.captcha', name: 'simplecaptcha', version: '1.2.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -12,10 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
@@ -23,8 +20,8 @@ public class PaymentController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String CLIENT_ID = "";
-    private final String SECRET_KEY = " ";
+    private final String CLIENT_ID = "S2_f345a53e543a40c596b075cc17e1dc2a";
+    private final String SECRET_KEY = "145d1d9f1db2436eb0554c1858df7e85 ";
 
     @RequestMapping("/indexDemo")
     public String indexDemo(Model model){
