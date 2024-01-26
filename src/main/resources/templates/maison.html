@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/maison.css" />
+    <title>Document</title>
+    <script defer src="/js/maison.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <nav class="pc-header-nav">
+        <h1 class="header-logo-area"><a href="/">메종쇼당</a></h1>
+
+        <ul class="header-menu-area">
+          <li class="menu-li">
+            <a href="/" class="menu-li-a">BRAND STORY</a>
+            <ul class="menu-drop-container">
+              <li><a href="/">BI</a></li>
+              <li><a href="/">LOCATION</a></li>
+            </ul>
+          </li>
+          <li class="menu-li">
+            <a href="/" class="menu-li-a">MENU</a>
+            <ul class="menu-drop-container">
+              <li><a href="/">음료</a></li>
+              <li><a href="/">푸드</a></li>
+              <li><a href="/">상품</a></li>
+            </ul>
+          </li>
+          <li class="menu-li">
+            <a href="/" class="menu-li-a">BRANCHES</a>
+            <ul class="menu-drop-container">
+              <li><a href="/">지점 소개</a></li>
+            </ul>
+          </li>
+          <li class="menu-li">
+            <a href="/" class="menu-li-a">FRANCHISE</a>
+            <ul class="menu-drop-container">
+              <li><a href="/">메종쇼당 창업비용</a></li>
+              <li><a href="/">메종쇼당 창업절차</a></li>
+              <li><a href="/">메종쇼당 창업상담</a></li>
+              <li><a href="/">메종쇼당 뉴스</a></li>
+              <li><a href="/">메종쇼당 FAQ</a></li>
+            </ul>
+          </li>
+          <li class="menu-li">
+            <a href="/" class="menu-li-a">STORE</a>
+            <ul class="menu-drop-container">
+              <li><a href="/">스토어</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="header-icon-area">
+          <li><a href="/" class="first">insta</a></li>
+          <li><a href="/" class="second">facebook</a></li>
+          <li><a href="/" class="third">shop</a></li>
+        </ul>
+      </nav>
+      <nav class="mobile-header-nav"></nav>
+    </header>
+    <!-- ================================================================ -->
+    <main>
+      <section class="storemap">
+        <section class="store-map-main">
+          <h2 class="store-map-title">매장목록</h2>
+        </section>
+        <!--store-map-main-->
+
+        <section class="store-map-txt">
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">메종쇼당 전체</span><br />
+            가족점 전체
+          </p>
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">메종쇼당 가맹본부</span
+            ><br />
+            경기도 화성시 동탄순환대로 702 메종쇼당 가맹본부
+          </p>
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">고급양식 in 메종쇼당 세종</span><br />
+            세종 집현중앙7로 6 G141호
+          </p>
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">메종쇼당 평택</span><br />
+            경기도 평택시 경기대로 945 PPO 3층 옥상정원
+          </p>
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">메종쇼당 순천</span><br />
+            전라남도 순천시 연향동 1326-1
+          </p>
+          <p class="store-map-contents">
+            <span class="store-map-contents-title">메종쇼당 일산</span><br />
+            오픈 예정
+          </p>
+        </section>
+        <!--store-map-contents-->
+        <section class="store-map-map">
+          <div id="map" style="width:100%;height:100%;"></div>
+          <script type="text/javascript" th:src="'//dapi.kakao.com/v2/maps/sdk.js?appkey='+${@environment.getProperty('kakao.map.script.key')}"></script>
+        </section>
+        <!--store-map-map-->
+      </section>
+      <!--storemap-->
+    </main>
+    <!-- ================================================================ -->
+    <footer>
+      <div class="footer-band"></div>
+      <section class="footer-inner-container">
+        <article class="footer-article left">
+          <div class="footer-img-area">
+            <div class="footer-img logo"></div>
+            <div class="footer-img btn">
+              <a href="/" class="footer-btn insta"></a>
+              <a href="/" class="footer-btn facebook"></a>
+              <a href="/" class="footer-btn shop"></a>
+            </div>
+          </div>
+          <div class="footer-company-area">
+            <h4>주식회사 MK로리아푸드</h4>
+            <p>
+              대표자 장민기 창업상담 031 897 5820 FAXX 031 897 5822<br />
+              사업자 등록 번호 138-81-45401 경기도 용인시 기흥구 용구대로
+              2469번길 40 4층
+            </p>
+          </div>
+        </article>
+        <article class="footer-article right">
+          <nav class="footer-nav">
+            <ul class="footer-nav-ul">
+              <li><a href="/">BRAND STORY</a></li>
+              <li>
+                <a href="/">MENU</a>
+                <ul>
+                  <li><a href="/">음료</a></li>
+                  <li><a href="/">초콜릿</a></li>
+                  <li><a href="/">디저트</a></li>
+                </ul>
+              </li>
+              <li><a href="/">BRANCHED</a></li>
+              <li>
+                <a href="/">FRANCHISE</a>
+                <ul>
+                  <li><a href="/">가맹문의</a></li>
+                  <li><a href="/">고객센터</a></li>
+                </ul>
+              </li>
+              <li>
+                <a href="/">STORE</a>
+                <ul>
+                  <li><a href="/">텀블러</a></li>
+                  <li><a href="/">머그컵</a></li>
+                  <li><a href="/">그릇</a></li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </article>
+      </section>
+    </footer>
+
+    <script defer>
+      let mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+          center: new kakao.maps.LatLng(36.498376, 127.330382), // 지도의 중심좌표
+          level: 12, // 지도의 확대 레벨
+          mapTypeId: kakao.maps.MapTypeId.ROADMAP // 지도종류
+        };
+
+      let map = new kakao.maps.Map(mapContainer, mapOption);
+
+      // 마커 포지션 작성
+      const positions = [
+        {
+          title: '메종쇼당 가맹본부',
+          latlng: new kakao.maps.LatLng(37.207359, 127.110996)
+        },
+        {
+          title: '고급양식 in 메종쇼당 세종',
+          latlng: new kakao.maps.LatLng(36.498403, 127.330382)
+        },
+        {
+          title: '메종쇼당 평택',
+          latlng: new kakao.maps.LatLng(37.034094, 127.069597)
+        },
+        {
+          title: '메종쇼당 순천',
+          latlng: new kakao.maps.LatLng(34.952944, 127.519541)
+        },
+        {
+          title: '메종쇼당 일산(오픈 예정)',
+          latlng: new kakao.maps.LatLng(37.658543, 126.774490)
+        }
+      ];
+
+      // 마커 생성 함수
+      function createMarker(position) {
+        let imageSrc = '../images/maison_location_pin.png',
+          imageSize = new kakao.maps.Size(42, 58);
+
+        // 마커 이미지 커스텀
+        let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+        const marker = new kakao.maps.Marker({
+          map: map,
+          position: position.latlng,
+          title: position.title,
+          image: markerImage,
+          clickable: true
+        });
+        map.setDraggable(false);
+        kakao.maps.event.addListener(marker, 'click', function() {
+          handleMarkerClick(position.latlng);
+        });
+      }
+      // 마커 클릭 이벤트 처리 함수
+      function handleMarkerClick(latlng) {
+        map.setCenter(latlng);
+        map.setLevel(map.getLevel() === 12 || map.getLevel() > 4 ? 4 : 2);
+      }
+
+      // 마커 생성
+      positions.forEach(createMarker);
+      map.setMaxLevel(12)
+      // p 태그 클릭 이벤트 연결
+      document.querySelectorAll('.store-map-contents').forEach((p) => {
+        p.addEventListener('click', function () {
+          const titleText = this.querySelector('.store-map-contents-title').textContent;
+          if(titleText==="메종쇼당 전체"){
+            map.setCenter( new kakao.maps.LatLng(36.498376, 127.330382));
+            map.setLevel(12);
+            map.relayout();
+          }
+          const clickedMarker = positions.find((position) => position.title.includes(titleText));
+
+          if (clickedMarker) {
+            handleMarkerClick(clickedMarker.latlng);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

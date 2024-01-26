@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <title>reCAPTCHA</title>
+</head>
+<body>
+<form id="myForm">
+    <!-- 여기에 폼 필드를 추가하세요 -->
+    <input type="text" placeholder="어쩌구저쩌구">
+    <input type="text" placeholder="어쩌구저쩌구">
+    <input type="text" placeholder="어쩌구저쩌구">
+    <input type="text" placeholder="어쩌구저쩌구">
+    <!-- Thymeleaf 문법을 사용하여 reCAPTCHA 사이트 키 설정 -->
+    <div class="g-recaptcha" data-sitekey="6LfaXVMpAAAAAJmilWS1QkpVB_vaFH_Gfcc0qS58" data-callback="onSubmit"></div>
+    <!-- 서브밋 버튼을 제거합니다 -->
+</form>
+
+<script th:inline="javascript">
+    /* Thymeleaf 문법을 사용하여 reCAPTCHA 응답을 가져옵니다 */
+    var recaptchaResponse = /*[[${recaptchaResponse}]]*/ grecaptcha.getResponse();
+
+    function onSubmit() {
+        // 서버 측에서 reCAPTCHA를 확인합니다
+        fetch('/verifyRecaptcha', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                recaptchaResponse: recaptchaResponse,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // reCAPTCHA 확인이 성공하면 폼을 제출합니다
+                    document.getElementById("myForm").submit();
+                } else {
+                    // reCAPTCHA 확인 실패 처리
+                    alert('reCAPTCHA 확인에 실패했습니다. 다시 시도해주세요.');
+                    // 선택적으로 reCAPTCHA 위젯을 리셋합니다
+                    grecaptcha.reset();
+                }
+            });
+    }
+</script>
+</body>
+</html>

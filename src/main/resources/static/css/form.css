@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    box-sizing: border-box;
+    padding-top: 100px;
+}
+
+main .top-text-container {
+    padding: 50px 15%;
+}
+
+main .top-text-container p {
+    line-height: 30px;
+}
+
+main .form-container {
+    background-color: #F7F2DD;
+    padding: 0 15% 50px 15%;
+}
+
+main .form-container .franchise-ul {
+    display: flex;
+    gap: 50px;
+    padding: 50px;
+}
+
+main .form-container .franchise-ul li a {
+    font-size: 18px;
+    color: black;
+}
+
+main .form-container .franchise-ul li a:hover {
+    text-decoration: underline;
+}
+
+main .form-container form {
+    padding: 50px 15%;
+    background-color: white;
+}
+
+main .form-container form h3 {
+    width: 25%;
+    height: 200px;
+    margin: 0 auto 50px;
+    background-color: red;
+    background: url(/images/seal.png) no-repeat center/cover;
+}
+
+main .form-container form .field-container {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+main .form-container form .field-container label {
+    width: 20%;
+    font-size: 20px;
+}
+
+main .form-container form .field-container input,
+main .form-container form .field-container #budget {
+    width: 80%;
+    height: 30px;
+    font-size: 20px;
+}
+
+
+main .form-container form .field-container textarea {
+    width: 80%;
+    height: 200px;
+    resize: none;
+    font-size: 20px;
+}
+
+main .form-container form .field-container.radio input {
+    width: unset;
+    height: 20px;
+}
+
+main .form-container form .field-container.radio span {
+    margin: 0 20px 0 5px;
+    font-size: 20px;
+}
+
+main .form-container form .field-container.content input {
+    height: 500px;
+}
+
+/* 유효성 검사 틀~~~ */
+main .form-container form .field-container .beforelabel::after ,
+main .form-container form .checkvail::after{
+    content: " *";
+    color: red;
+}
+
+main .form-container form .valip {
+    text-align: center;
+}
+
+
+main .form-container form .agree-container {
+    margin-top: 50px;
+}
+
+main .form-container form .agree-container .text-box {
+    box-sizing: border-box;
+    border: 1px solid;
+    padding: 20px;
+    width: 100%;
+}
+
+main .form-container form .agree-container .text-box p {
+    line-height: 26px;
+}
+
+main .form-container form .agree-container .agree-box {
+    margin: 15px 0;
+}
+
+main .form-container form .submit-btn {
+    width: 100%;
+    height: 50px;
+    margin-top: 25px;
+    font-size: 25px;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
