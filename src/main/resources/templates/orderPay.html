@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>주문하기</title>
+</head>
+<body>
+
+
+
+<form id="kakaoPayForm"> <!--th:action="@{/kakao-pay/ready}" method="post"-->
+
+  <table>
+    <thead>
+    <tr>
+      <th></th>
+      <th>ID</th>
+      <th>Item ID</th>
+      <th>Count</th>
+    </tr>
+    </thead>
+    <tbody id="cartItemsBody">
+    <!-- Cart items will be displayed here -->
+    </tbody>
+  </table>
+
+  <button type="button" onclick="kakaoPayReady()">KakaoPay 결제하기</button>
+</form>
+
+<script>
+  function kakaoPayReady() {
+    // 비동기 통신
+    fetch('/kakao-pay/ready', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        location.href = data.redirectUrl;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+</script>
+
+
+</body>
+</html>

@@ -24,6 +24,17 @@ inputVail.addEventListener('input', (e) => {
     .replace(/[^0-9]/g, '')
     .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
 
+  // eventObj.value = eventObj.value
+  //   .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/, function(match, p1, p2, p3) {
+  //     var parts = [p1, p2, p3];
+  //     parts = parts.map(function(part) {
+  //       return part.replace(/\D/g, '');  // 숫자 이외의 문자 제거
+  //     });
+  //     return parts.filter(function(part) {
+  //       return part !== '';  // 빈 문자열 제거
+  //     }).join('-');
+  //   });
+
   if (phoneNumberRegex.test(eventObj.value)) {
     trigger = true;
     ptag.textContent = "정확한 입력 감사합니다. 다음 단계로 진행하세요."

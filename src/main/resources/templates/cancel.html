@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Nicepay spring-boot</title>
+  <meta charset="UTF-8">
+  <title>Title</title>
   <meta httpEquiv="x-ua-compatible" content="ie=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
-
 <body>
 <h1>NICEPAY TEST</h1>
-<form method="POST" action="/cancelAuth">
+<form method="POST" action="/niceApi/cancelAuth">
   <label>tid</label><br>
   <input type="text" name="tid" value="nicuntct2m01162108062021411005"><br>
 
@@ -19,5 +19,4 @@
   <input type="submit" value="취소요청">
 </form>
 </body>
-
 </html>

@@ -1,10 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
 <body>
   <h1>성공</h1>
+  <h1>Kakao Approve Response</h1>
+  <p th:text="${kakaoApprove}">Property Value</p>
+  <!-- 다른 속성들도 필요한대로 출력 -->
+
+  <input type="text" th:value="${kakaoApprove.getCid()}" name="cid">
+  <input type="text" th:value="${kakaoApprove.getTid()}" name="tid">
+  <input type="text" th:value="${kakaoApprove.getAmount().getTotal()}" name="cancel_amount">
+  <input type="text" th:value="${kakaoApprove.getAmount().getTax_free()}" name="cancel_tax_free_amount">
+  <input type="text" th:value="${kakaoApprove.getAmount().getVat()}" name="cancel_vat_amount">
+
+<button th:onclick="kakaoApprovedCancel()">결제 취소</button>
+
+<script>
+  const input = document.querySelectorAll("input");
+
+  const inputData = {};
+
+  input.forEach(element => {
+    inputData[element.name] = element.value;
+  });
+
+  function kakaoApprovedCancel() {
+    const formData = new FormData(); // FormData 객체 생성
+
+    // // FormData 객체에 입력된 값을 추가
+    // input.forEach(element => {
+    //   if(element.name.includes("cancel")){
+    //     console.log(element.name);
+    //     formData.append(element.name, parseInt(element.value));
+    //   }
+    //   formData.append(element.name, element.value);
+    //
+    // });
+    input.forEach(element => {
+      inputData[element.name] = element.value;
+    });
+
+
+    console.log(inputData);
+
+    fetch('http://localhost:8080/kakao-pay/approvedCancel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inputData)
+    })
+      .then(response => response.json()) // 응답을 JSON 형식으로 파싱
+      .then(data => {
+        console.log(data); // 서버로부터 받은 데이터 처리
+      })
+      .catch(error => {
+        console.error('Error:', error); // 오류 처리
+      });
+  }
+
+</script>
 </body>
 </html>

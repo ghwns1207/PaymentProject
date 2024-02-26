@@ -1,31 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko">
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 </head>
 <title>나이스페이Test</title>
 <head>
 <meta charset="UTF-8">
+ <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
 <body>
- <button onclick="serverAuth()">serverAuth 결제하기</button>
- <script>
-   function serverAuth() {
+
+<script src="https://pay.nicepay.co.kr/v1/js/"></script>
+<script>
+ const clientId = "[[${clientId}]]";
+ const orderId = "[[${orderId}]]";
+ console.log(orderId, clientId);
+function serverAuth() {
+
      AUTHNICE.requestPay({
-       clientId: '58e3b578555e45738d6b569e53d5ae54',
+       clientId:  clientId,
        method: 'card',
-       orderId: random(),
-       amount: 1004,
-       goodsName: '나이스페이-상품',
-       returnUrl: 'http://localhost:3000/serverAuth',
+       orderId: orderId,
+       amount: 100400,
+       goodsName: 'Test-상품',
+       returnUrl: 'http://localhost:8080/niceApi/serverAuth',
+       buyerName :'Test',
+       buyerTel : '01011111111',
+       buyerEmail :'test@test.com',
+       currency : 'KRW',
        fnError: function (result) {
          alert('고객용메시지 : ' + result.msg + '\n개발자확인용 : ' + result.errorMsg + '')
+        console.log(result.errorMsg);
        }
      });
-   }
 
-   //Test orderId 생성
-   const random = (length = 8) => {
-     return Math.random().toString(16).substr(2, length);
-   };
- </script>
+}
+</script>
+<button onclick="serverAuth()">serverAuth 결제하기</button>
 </body>
 </html>

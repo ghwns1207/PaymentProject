@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>intelCart</title>
+</head>
+
+<body>
+<div class="main_itemDiv1">
+  <div class="testForm">
+    <div class="item">
+      <input type="checkbox" id="checkitem1" name="checkitem1">
+      <input type="text" name="itemName" readonly placeholder="쉐이크 1" value="checkitem1">
+      <select name="checkitem1type" class="check_type">
+        <option value="125">125ml</option>
+        <option value="325">325ml</option>
+      </select>
+      <input type="number" min="1" value="1" class="itemNum" name="itemNum">
+      <input type="text" class="item_total" value="125" readonly>
+      <button type="button" onclick="addCart()">장바구니 추가</button>
+      <button type="button" onclick="handlePurchase()">구매 하기</button>
+    </div>
+  </div>
+
+  <form>
+    <div class="item">
+      <input type="checkbox" id="checkitem2" name="checkitem2">
+      <label for="checkitem2">쉐이크 2</label>
+      <select name="checkitem2type" class="check_type">
+        <option value="125">125ml</option>
+        <option value="325">325ml</option>
+      </select>
+      <input type="number" min="1" value="1" class="itemNum" name="itemNum">
+      <input type="text" class="item_total" value="125" readonly>
+      <button>장바구니 추가</button>
+    </div>
+  </form>
+
+  <form>
+    <div class="item">
+      <input type="checkbox" id="checkitem3" name="checkitem3">
+      <label for="checkitem3">쉐이크 3</label>
+      <select name="checkitem3type" class="check_type">
+        <option value="125">125ml</option>
+        <option value="325">325ml</option>
+      </select>
+      <input type="number" min="1" value="1" class="itemNum" name="itemNum">
+      <input type="text" class="item_total" value="125" readonly>
+      <button>장바구니 추가</button>
+    </div>
+  </form>
+
+  <form>
+    <div class="item">
+      <input type="checkbox" id="checkitem4" name="checkitem4">
+      <label for="checkitem4">쉐이크 4</label>
+      <select name="checkitem4type" class="check_type">
+        <option value="125">125ml</option>
+        <option value="325">325ml</option>
+      </select>
+      <input type="number" min="1" value="1" class="itemNum" name="itemNum">
+      <input type="text" class="item_total" value="125" readonly>
+      <button>장바구니 추가</button>
+    </div>
+  </form>
+
+  <form>
+    <div class="item">
+      <input type="checkbox" id="checkitem5" name="checkitem5">
+      <label for="checkitem5">쉐이크 5</label>
+      <select name="checkitem5type" class="check_type">
+        <option value="125">125ml</option>
+        <option value="325">325ml</option>
+      </select>
+      <input type="number" min="1" value="1" class="itemNum" name="itemNum">
+      <input type="text" class="item_total" value="125" readonly>
+      <button>장바구니 추가</button>
+    </div>
+  </form>
+
+  <button onclick="retrieveBasket()">장바구니 목록보기</button>
+
+  <form id="cartForm">
+    <div class="form_div">
+
+    </div>
+    <div>
+      <input type="text" readonly value="0" class="item_sum" name="item_sum">
+      총가격 <input type="text" readonly class="total_amount" value="0" name="total_amount">
+    </div>
+    <button type="button" onclick="cartFormBtn()">결제하기</button>
+  </form>
+</div>
+
+<h1>Cart Items</h1>
+<table>
+  <thead>
+  <tr>
+    <th></th>
+    <th>ID</th>
+    <th>Item ID</th>
+    <th>Count</th>
+  </tr>
+  </thead>
+  <tbody id="cartItemsBody">
+  <!-- Cart items will be displayed here -->
+  </tbody>
+</table>
+
+<form action="http://localhost:8080/kakaoPay" method="get">
+  <button type="submit">결제하기</button>
+</form>
+
+<script>
+  let form = document.querySelector('.testForm');
+  // 인풋태크 계산
+  let totalPrice = 0;
+  let totalAmountInput = document.querySelector(".total_amount");
+  let items = document.querySelectorAll(".item");
+  let item_sum = document.querySelector(".item_sum");
+
+  function handlePurchase() {
+
+  }
+
+
+  /*
+  * 장바구니 추가
+  * */
+  function addCart() {
+    // 폼을 가져옵니다.
+    let form = document.querySelector('.testForm');
+    let checkbox = form.querySelector("#checkitem1");
+
+    // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+    let jwtToken = sessionStorage.getItem('jwtToken');
+    // JWT 토큰이 없으면 에러를 처리합니다.
+
+    if (!jwtToken) {
+      alert("로그인 해주세요");
+      window.location.href = "/login"; // 로그인 페이지 URL로 이동
+      return; // 함수를 종료합니다.
+    } else {
+      let jwtToken = sessionStorage.getItem('jwtToken');
+      let itemName = checkbox.name;
+      let itemType = form.querySelector('.check_type').value;
+      let itemQuantity = form.querySelector('.itemNum').value;
+
+      // 요청 헤더에 JWT 토큰을 포함시킵니다.
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken
+      };
+
+      // 요청 바디에 데이터를 JSON 형식으로 변환하여 전송합니다.
+      let requestData = {
+        itemName: itemName,
+        itemType: itemType,
+        itemQuantity: itemQuantity
+      };
+
+      fetch("http://localhost:8080/cart/add_items", {
+        method: "POST",
+        headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
+        body: JSON.stringify(requestData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          alert("장바구니 추가")
+          console.log(data); // 서버로부터 받은 데이터 로깅
+          let gcfuuid = data.id;
+          sessionStorage.setItem("gcfuuid", gcfuuid);
+          retrieveBasket();
+        })
+        .catch(err => {
+          console.error('There was a problem with the fetch operation:', err);
+        });
+    }
+  }
+
+
+  /*
+  * 장바구니 조회
+  * */
+  function retrieveBasket() {
+    // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+    let jwtToken = sessionStorage.getItem('jwtToken');
+    // JWT 토큰이 없으면 에러를 처리합니다.
+
+    if (!jwtToken) {
+      alert("로그인 해주세요");
+      window.location.href = "/login"; // 로그인 페이지 URL로 이동
+      return; // 함수를 종료합니다.
+    } else {
+      // // 요청 헤더에 JWT 토큰을 포함시킵니다.
+      // let gcfuuid = sessionStorage.getItem('gcfuuid');
+      //
+      // if (!gcfuuid) {
+      //   alert("장바구니가 없습니다.");
+      //   return;
+      // }
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken,
+        // 'Uuid': gcfuuid
+      };
+      fetch("http://localhost:8080/cart/retrieveBasket", {
+        method: "GET",
+        headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
+      })
+        .then(res => {
+          console.log(res.status);
+          if (res.status === 200) {
+            return res.json();
+          }else if(res.status === 204){
+            alert("장바구니가 비어 있습니다.");
+            return;
+        }else if(res.status === 400){
+            alert("장바구니가 비어 있습니다.");
+            window.location.href = "/cartView";
+            return;
+          } else if(res.status === 403){
+            alert("로그인 정보를 확인해주세요.");
+            return ;
+          } else {
+            throw new Error("네트워크 오류 발생");
+          }
+        }).then(data => {
+          if(data){
+            displayCartItems(data); // 테이블에 장바구니 항목 표시
+          }
+      })
+        .catch(error => {
+          console.log(error.message);
+
+        })
+    }
+  }
+
+
+
+    /*
+    * 장바구니 목록 테이블 추가 함수
+    * */
+    function displayCartItems(cartItems) {
+      const cartItemsBody = document.getElementById("cartItemsBody");
+      cartItemsBody.innerHTML = ""; // 기존 테이블 내용 초기화
+
+      cartItems.forEach((cartItem, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                <td><input type="text" readonly value="${index + 1}"></td>
+                <td><input class="cartId" readonly value="${cartItem.id}"></td>
+                <td><input class="cartItemId" type="text" readonly value="${cartItem.itemId}"></td>
+                <td><input class="cartItemCount"  type="number" readonly value="${cartItem.count}"></td>
+                <td ><button type="button" onclick="changeCartItem(this)" class="updateBtn">수정</button>
+                <button type="submit" onclick="updateCartItem(${cartItem.id}, this)" class="saveBtn" style="display: none">저장</button></td>
+                <td class="deleteTd"><button  type="submit" onclick="deleteCartItem(${cartItem.id})" class="deleteBtn">삭제</button>
+                <button onclick="cancelEdit(this ,${cartItem.count})" class="cancelBtn" style="display: none">취소</button></td>
+      `;
+        cartItemsBody.appendChild(row);
+      });
+    }
+
+
+
+    function changeCartItem(button) {
+      const row = button.closest('tr');
+      toggleButtons(row, true);
+    }
+
+    function cancelEdit(button, count) {
+      const row = button.closest('tr');
+      toggleButtons(row, false);
+      const countInput = row.querySelector('input.cartItemCount');
+      countInput.value = count;
+    }
+
+
+    function toggleButtons(row, showSaveCancelBtns) {
+      const countInput = row.querySelector('input.cartItemCount');
+      const updateBtn = row.querySelector('.updateBtn');
+      const saveBtn = row.querySelector('.saveBtn');
+      const deleteBtn = row.querySelector('.deleteBtn');
+      const cancelBtn = row.querySelector('.cancelBtn');
+
+      countInput.readOnly = !showSaveCancelBtns;
+
+      saveBtn.style.display = showSaveCancelBtns ? 'inline-block' : 'none';
+      cancelBtn.style.display = showSaveCancelBtns ? 'inline-block' : 'none';
+      updateBtn.style.display = showSaveCancelBtns ? 'none' : 'inline-block';
+      deleteBtn.style.display = showSaveCancelBtns ? 'none' : 'inline-block';
+    }
+
+
+
+    /*
+    * 장바구니 업데이트
+    * */
+    function updateCartItem(cartId,eventBtn) {
+      // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+      let jwtToken = sessionStorage.getItem('jwtToken');
+      const row = eventBtn.closest('tr');
+      const countInput = row.querySelector('input.cartItemCount');
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken,
+      };
+      if (!jwtToken) {
+        alert("로그인해주세요");
+        window.location.href = "/login";
+      } else {
+        fetch(`http://localhost:8080/cart/updateCart/${cartId}/${countInput.value}`, {
+          method: "GET",
+          headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
+        })
+          .then(res => {
+            if(res.ok){
+              alert("저장 완료");
+              retrieveBasket()
+            }else if (res.status === 404){
+              throw new Error("아이템 정보를 확인해주세요.");
+            } else if(res.status === 403){
+              throw new Error("로그인 해주세요.");
+            } else if (res.status === 401) {
+              throw new Error("로그인 정보를 확인해주세요.");
+            }
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      }
+
+    }
+
+    /*
+    * 카트 상품 제거
+    * */
+    function deleteCartItem(cartId) {
+
+      console.log(cartId);
+      // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+      let jwtToken = sessionStorage.getItem('jwtToken');
+      // 요청 헤더에 JWT 토큰을 포함시킵니다.
+      let gcfuuid = sessionStorage.getItem('gcfuuid');
+
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken,
+        'Uuid': gcfuuid
+      };
+      if (!jwtToken) {
+        alert("로그인해주세요");
+        window.location.href = "/login";
+      }
+      fetch(`http://localhost:8080/cart/deleteItem/${cartId}`, {
+          method: "GET",
+          headers: headers,
+        }
+      )
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(data => {
+          alert(data);
+          retrieveBasket();
+        })
+        .catch(error => {
+          console.error(error);
+          if (error.status === 401 || error.status === 403) {
+            alert(error.body);
+            window.location.href = "/login";
+          } else if (error.status === 409) alert(error.message);
+        })
+
+    }
+
+
+    items.forEach(item => {
+      let checkbox = item.querySelector("input[type='checkbox']");
+      let select = item.querySelector(".check_type");
+      let numInput = item.querySelector(".itemNum");
+      let totalInput = item.querySelector(".item_total");
+
+      checkbox.addEventListener("change", () => {
+        // 체크박스의 상태가 변경될 때마다 totalPrice를 새로 계산하여 갱신
+        totalPrice = calculateTotalPrice();
+        totalAmountInput.value = totalPrice;
+        // 아이템 총 수량을 업데이트합니다.
+        updateItemSum();
+      });
+
+      numInput.addEventListener("input", () => {
+        let numValue = parseInt(numInput.value);
+        let shakePrice = parseInt(select.value);
+        let newTotalPrice = numValue * shakePrice;
+        let oldItemTotalPrice = parseInt(totalInput.value);
+
+        totalPrice = totalPrice - oldItemTotalPrice + newTotalPrice;
+        totalInput.value = newTotalPrice;
+
+        if (checkbox.checked) {
+          totalPrice = calculateTotalPrice();
+          totalAmountInput.value = totalPrice;
+          // 아이템 총 수량을 업데이트합니다.
+          updateItemSum();
+        }
+      });
+
+      select.addEventListener("change", () => {
+        numInput.value = 1;
+        let numValue = parseInt(numInput.value);
+        let oldOptionPrice = parseInt(totalInput.value);
+        let newOptionPrice = parseInt(select.value) * numValue;
+
+        totalPrice = totalPrice - oldOptionPrice + newOptionPrice;
+        totalInput.value = newOptionPrice;
+
+        if (checkbox.checked) {
+          totalPrice = calculateTotalPrice();
+          totalAmountInput.value = totalPrice;
+          // 아이템 총 수량을 업데이트합니다.
+          updateItemSum();
+        }
+      });
+    });
+
+    // 현재 체크된 상품들의 총 가격을 계산하는 함수
+    function calculateTotalPrice() {
+      let total = 0;
+      items.forEach(item => {
+        let checkbox = item.querySelector("input[type='checkbox']");
+        let totalInput = item.querySelector(".item_total");
+        if (checkbox.checked) {
+          total += parseInt(totalInput.value);
+        }
+      });
+      return total;
+    }
+
+    // 아이템 총 수량을 업데이트하는 함수
+    function updateItemSum() {
+      let sum = 0;
+      items.forEach(item => {
+        let checkbox = item.querySelector("input[type='checkbox']");
+        let numInput = item.querySelector(".itemNum");
+        if (checkbox.checked) {
+          sum += parseInt(numInput.value) || 0; // NaN을 방지하기 위해 0으로 대체합니다.
+        }
+      });
+      item_sum.value = sum;
+    }
+
+
+
+</script>
+</body>
+
+</html>

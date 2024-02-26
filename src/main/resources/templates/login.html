@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!--  <script defer src="/Js/Loginpage.js"></script>-->
+  <script defer src="/js/loginPage.js"></script>
   <title>ComeTrue</title>
 </head>
 <body>
@@ -28,11 +28,12 @@
   <button id="loginBtn" type="submit">로그인</button>
 </form>
 <!--주소 고정-->
-<a href="/oauth2/authorization/google">구글 로그인</a>
+<a href="/oauth2/authorization/google">구글 로그인</a> <!-- &prompt=login 로그인시 카카오 QR로 재시작-->
 <a th:href="@{'https://kauth.kakao.com/oauth/authorize?client_id=' + ${@environment.getProperty('kakao.restApi.key')}
 + '&redirect_uri=' +${@environment.getProperty('kakao.redirectTest.uri')} + '&response_type=code'}">
   <img src="/images/kakao_login_medium.png" alt="카카오로그인"/></a>
-
 <a href="/Singup">회원가입</a>
 </body>
+<button onclick="kakaoLogout()">카카오로그아웃</button>
+
 </html>

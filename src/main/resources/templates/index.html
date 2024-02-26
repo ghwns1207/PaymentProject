@@ -1,35 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<html>
-
 <head>
-    <title>Nicepay spring-boot</title>
-    <meta httpEquiv="x-ua-compatible" content="ie=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://pay.nicepay.co.kr/v1/js/"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script defer src="/js/index.js"></script>
+  <title>ComeTrue</title>
 </head>
-
 <body>
-<h1>NICEPAY TEST</h1>
-<button onclick="serverAuth()">serverAuth 결제하기</button>
+<div class="mainDiv">
+  <header>
+    <div class="logoname">
+      <h1>ComeTrue</h1>
+    </div>
+    <hr>
+    <h3><a href="login">로그인</a></h3>
+    <hr>
+    <h3><a href="product">상품</a></h3>
+    <h3><a href="indexDemo">결제</a></h3>
+    <hr>
+  </header>
+  <main>
+    <div>
+      <section>
+        <h2>서비스 소개</h2>
+        <p th:text="${mainMessage}">${mainMessage}</p>
+      </section>
+      <section>
+        <h2>문의하기</h2>
+        <p>문의나 피드백은 언제든 환영합니다.</p>
+      </section>
+      <!-- 모델에 userName이 있을 때 -->
+      <p th:if="${userName}" th:text="${userName}">${userName}</p>
+      <button th:onclick="kakaoLogout()">로그아웃</button>
+      <a th:href="@{'https://kauth.kakao.com/oauth/logout?client_id='  + ${@environment.getProperty('kakao.restApi.key')} +
+      '&logout_redirect_uri=' +  ${@environment.getProperty('kakao.redirectLogoutTest.uri')}  }">카카오 계정과 함께 로그아웃 </a>
+      <button th:onclick="kakaoOathLogout()">카카오 계정과 함께 로그아웃</button>
+      <!-- 모델에 userName이 없을 때 -->
+      <h3 th:unless="${userName}"><a href="login">로그인</a></h3>
+    </div>
+    <div>
+      <button th:onclick="kakaoUnlink()">회원 탈퇴</button>
+    </div>
+    <a onclick="">쇼핑</a>
+  </main>
+</div>
+<footer>
 
 
-<script>
-    function serverAuth() {
-        AUTHNICE.requestPay({
-            clientId: '[[${clientId}]]',
-            method: 'card',
-            orderId: '[[${orderId}]]',
-            amount: 1004,
-            goodsName: '나이스페이-상품',
-            returnUrl: 'http://localhost:8080/serverAuth',
-            fnError: function (result) {
-                console.log('개발자확인용 : ' + result.errorMsg + '')
-            }
-        });
-    }
-</script>
+
+  <div class="footerDiv">
+    <a href="/">야야야1</a>
+    <a href="/">야야야1</a>
+    <a href="/">야야야1</a>
+  </div>
+  <div class="footerDiv">
+    <a href="/">야야야2</a>
+    <a href="/">야야야2</a>
+    <a href="/">야야야2</a>
+  </div>
+  <div class="footerDiv">
+    <a href="/">야야야3</a>
+    <a href="/">야야야3</a>
+    <a href="/">야야야3</a>
+  </div>
+</footer>
 </body>
-
 </html>
