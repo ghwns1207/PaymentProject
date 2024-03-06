@@ -19,6 +19,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class KakaoLoginService {
 
   public Optional<User> getUser(Long userid) throws Exception {
 
-    return kakaoLoginRepository.findByUserIdAndAndWithdrawnIsFalse(userid);
+    return kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(userid);
   }
 
   /*
@@ -93,13 +94,11 @@ public class KakaoLoginService {
       Map<String, Object> response = new HashMap<>();
       response.put("kakaoProfile", kakaoProfile);
       response.put("kakaoLoginResponse", kakaoLoginResponse);
-      if (kakaoLoginRepository.findByUserIdAndAndWithdrawnIsFalse(kakaoProfile.getId()).isEmpty()) {
+      if (kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(kakaoProfile.getId()).isEmpty()) {
         if (kakaoProfile.getId() != null) {
-          String checkPhoneNumber = Arrays.stream(kakaoProfile.getKakao_account().getPhone_number().split(" ")).map(
-              c -> c.replaceAll("-", "")).collect(Collectors.joining());
-          log.info("PhoneNumber : {}", checkPhoneNumber);
+          String checkPhoneNumber = kakaoProfile.getKakao_account().getPhone_number();
           if (checkPhoneNumber.contains("+82")) {
-            String userPhoneNumber = checkPhoneNumber.replaceAll("\\+82", "0");
+            String userPhoneNumber = checkPhoneNumber.replaceAll("\\+82", "0").replaceAll("\\s+", "");
             log.info("userPhoneNumber : {}", userPhoneNumber);
             // UserRole 객체 조회
             UserRole userRole = userRoleRepository.findById(3L)
@@ -264,47 +263,49 @@ public class KakaoLoginService {
 
   }
 
-  public ResponseEntity<?> kakaoUnlink(String accessToken){
+  public ResponseEntity<?> kakaoUnlink(String accessToken) {
     String reqURL = "https://kapi.kakao.com/v1/user/unlink";
 
     try {
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("Content-type", "application/x-www-form-urlencoded");
-    headers.add("Authorization", "Bearer " + accessToken);
-    HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(null, headers);
+      HttpHeaders headers = new HttpHeaders();
+      headers.add("Content-type", "application/x-www-form-urlencoded");
+      headers.add("Authorization", "Bearer " + accessToken);
+      HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(null, headers);
 
-    RestTemplate restTemplate = new RestTemplate();
+      RestTemplate restTemplate = new RestTemplate();
 
-    ResponseEntity<String> response = restTemplate.postForEntity(reqURL, requestEntity, String.class);
-    log.info("response : {}", response.getBody());
-    // ObjectMapper 생성
-    ObjectMapper objectMapper = new ObjectMapper();
-    // JSON 문자열 파싱
-    JsonNode rootNode = objectMapper.readTree(response.getBody());
+      ResponseEntity<String> response = restTemplate.postForEntity(reqURL, requestEntity, String.class);
+      log.info("response : {}", response.getBody());
+      // ObjectMapper 생성
+      ObjectMapper objectMapper = new ObjectMapper();
+      // JSON 문자열 파싱
+      JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-    // id 값이 있는지 확인
-    if (rootNode.has("id")) {
-      // 루트 노드에서 ID 추출
-      Long userId = rootNode.get("id").asLong();
-     Optional<User> userOptional = kakaoLoginRepository.findByUserIdAndAndWithdrawnIsFalse(userId);
-     if (userOptional.isEmpty()){
-       return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 ID를 확인해주세요 실패!");
-     }
+      // id 값이 있는지 확인
+      if (rootNode.has("id")) {
+        // 루트 노드에서 ID 추출
+        Long userId = rootNode.get("id").asLong();
+        Optional<User> userOptional = kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(userId);
+        if (userOptional.isEmpty()) {
+          return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 ID를 확인해주세요 실패!");
+        }
 
-      User user = userOptional.get();
-     user.setWithdrawn(true);
-      User checkUser = kakaoLoginRepository.save(user);
+        User user = userOptional.get();
+        user.setWithdrawn(true);
+        user.setWithdrawnAt(String.valueOf(LocalDateTime.now()));
+        User checkUser = kakaoLoginRepository.save(user);
 
-      if (checkUser != null) {
-        cartRepository.deleteByUser_Id(user.getId());
-        return ResponseEntity.ok(response);
+        if (checkUser != null) {
+          cartRepository.deleteCartByUser_Id(user.getId());
+          return ResponseEntity.ok(response);
+        } else {
+          return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 실패!");
+        }
       } else {
-        return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 실패!");
+        return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 ID를 확인해주세요 실패!");
       }
-    } else {
-      return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 ID를 확인해주세요 실패!");
-    }
     } catch (Exception e) {
+      log.error("e : {}",e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러 탈퇴 실패!");
     }
 

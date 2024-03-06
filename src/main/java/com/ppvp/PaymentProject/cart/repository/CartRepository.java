@@ -1,18 +1,18 @@
 package com.ppvp.PaymentProject.cart.repository;
 
-import com.ppvp.PaymentProject.cart.cartModel.CartDto;
+import com.ppvp.PaymentProject.cart.cartModel.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CartRepository extends JpaRepository<CartDto, Long> {
-  Optional<CartDto> findCartDtoByUser_UserId (Long userId);
+public interface CartRepository extends JpaRepository<Cart, Long> {
+  Optional<Cart> findCartByUser_UserId (Long userId);
 
-  Optional<CartDto> findCartDtoByUser_Id(Long id);
+  Optional<Cart> findCartByUser_Id(Long id);
 
-  boolean deleteByUser_Id(Long id);
+  void deleteCartByUser_Id(Long id);
 
-  CartDto save(CartDto cartDto);
+  Cart save(Cart cart);
 }

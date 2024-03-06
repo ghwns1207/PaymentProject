@@ -3,31 +3,405 @@
 <head>
   <meta charset="UTF-8">
   <title>주문하기</title>
+
 </head>
 <body>
 
+<div id="deliveryDiv">
+  <h1>배송지</h1>
+  <input id="deliveryAddress_recipient_name">
+  <input id="deliveryAddress_contact_number">
+  <input id="deliveryAddress" style="width: 500px">
+  <button id="openModalBtn">변경</button>
+</div>
 
+<div id="myModal" class="modal" style="display: none">
+  <div class="modal_content">
+    <span class="close">&times;</span>
+    <div id="updateDeliveryAddressDiv">
+      <div style="display: none" id="recipient_nameDiv">
+        <label for="recipient_name">받는 이</label>
+        <input id="recipient_name" required maxlength="50">
+        <p></p>
+      </div>
+      <div style="display: none" id="contact_numberDiv">
+        <label for="contact_number">연락처</label>
+        <input id="contact_number" required placeholder="연락처를 입력해주세요.">
+        <p></p>
+      </div>
+      <div>
+        <label for="searchDeliveryAddress">주소</label>
+        <input id="searchDeliveryAddress" type="button" onclick="execDaumPostcode()" value="주소 찾기"><br>
+      </div>
+      <div id="searchDeliveryAddressDiv" style="display: none">
+        <input style="display: none" type="text" id="postcode" placeholder="우편번호" readonly>
+        <input style="display: none" type="text" id="roadAddress" placeholder="도로명주소" readonly>
+        <input style="width: 500px" type="text" id="roadFullAddress" placeholder="도로명주소" readonly>
+        <span id="guide" style="color:#999;display:none"></span>
+        <input type="text" id="detailAddress" placeholder="상세주소" requirede>
+        <input style="display: none" type="text" id="extraAddress" placeholder="참고항목" readonly>
+        <button type="button" id="addressCheckBTN">확인</button>
+        <input type="checkbox" id="default_address"><label for="default_address">기본 배송로 설정</label>
+        <button type="button" id="updateDeliveryAddressBtn">저장하기</button>
+      </div>
+
+      <ul id="deliveryAddressListUl">
+
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="customerDiv">
+  <h2>주문자</h2>
+  <input type="text" id="nameInput">
+  <input type="text" id="phoneNumberInput">
+  <input type="text" id="emailInput">
+</div>
 
 <form id="kakaoPayForm"> <!--th:action="@{/kakao-pay/ready}" method="post"-->
-
-  <table>
-    <thead>
-    <tr>
-      <th></th>
-      <th>ID</th>
-      <th>Item ID</th>
-      <th>Count</th>
-    </tr>
-    </thead>
-    <tbody id="cartItemsBody">
-    <!-- Cart items will be displayed here -->
-    </tbody>
-  </table>
+  <div>
+    <h2></h2>
+    <table>
+      <thead>
+      <tr>
+        <th>주문상세번호</th>
+        <th>상품 아이디</th>
+        <th>상품 수량</th>
+      </tr>
+      </thead>
+      <tbody id="orderItemsBody">
+      </tbody>
+    </table>
+  </div>
 
   <button type="button" onclick="kakaoPayReady()">KakaoPay 결제하기</button>
 </form>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script defer>
 
-<script>
+  // inputVail.addEventListener('input', (e) => {
+  //   const eventObj = e.target;
+  //
+  //   eventObj.value = eventObj.value
+  //     .replace(/[^0-9]/g, '')
+  //     .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+  //
+  //   if (phoneNumberRegex.test(eventObj.value)) {
+  //     Vailtrigger = true;
+  //     ptag.textContent = "정확한 입력 감사합니다. 다음 단계로 진행하세요."
+  //     ptag.style.color = "green";
+  //   } else {
+  //     Vailtrigger = false;
+  //     ptag.textContent = "연락처는 010-xxxx-xxxx와 같은 올바른 형식으로 입력해 주세요."
+  //     ptag.style.color = "red";
+  //   }
+  // });
+
+  window.onload = function () {
+    // JWT 토큰 확인
+    const jwtToken = sessionStorage.getItem('jwtToken'); // 로컬 스토리지에서 JWT 토큰을 가져옵니다.
+    // 요청 헤더에 JWT 토큰을 포함시킵니다.
+    const goduuid = sessionStorage.getItem('goduuid');
+    if (jwtToken) {
+      // JWT 토큰이 있다면, 서버에 요청을 보냅니다.
+      fetch(`http://localhost:8080/order/loadordersheet/${goduuid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + jwtToken, // JWT 토큰을 헤더에 포함시킵니다.
+          'Content-Type': 'application/json',
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch data');
+          }
+          return response.json();
+        })
+        .then(responseData => {
+          // 주문 디테일 테이블에서 받아온 데이터를 처리합니다.
+          console.log(responseData);
+          // 여기서 데이터를 이용하여 화면에 표시하거나 다른 작업을 수행합니다.
+
+          // // 주문자 정보 추출
+          const customerInfo = responseData.data;
+          console.log(customerInfo);
+
+          // 각 입력란에 해당 정보 할당
+          const nameInput = document.getElementById("nameInput");
+          const phoneNumberInput = document.getElementById("phoneNumberInput");
+          const emailInput = document.getElementById("emailInput");
+
+          nameInput.value = customerInfo.purchaserName; // 예시: 주문자 이름이 name 속성에 들어있다고 가정
+          phoneNumberInput.value = customerInfo.phoneNumber; // 예시: 주문자 전화번호가 phoneNumber 속성에 들어있다고 가정
+          emailInput.value = customerInfo.purchaserEmail; // 예시: 주문자 이메일이 email 속성에 들어있다고 가정
+
+          if (customerInfo.deliveryAddress !== null) {
+            const deliveryAddress_recipient_name = document.getElementById("deliveryAddress_recipient_name");
+            const deliveryAddress_contact_number = document.getElementById("deliveryAddress_contact_number");
+            let deliveryAddress = document.getElementById("deliveryAddress");
+
+            deliveryAddress_recipient_name.value = customerInfo.deliveryAddress.recipientName;
+            deliveryAddress_contact_number.value = customerInfo.deliveryAddress.contactNumber;
+            deliveryAddress.value = customerInfo.deliveryAddress.roadAddress + customerInfo.deliveryAddress.detailAddress
+              + " " + customerInfo.deliveryAddress.extraAddress + ` (${customerInfo.deliveryAddress.postalCode})`;
+          }
+
+          displayCartItems(responseData.data.orderDetailsList);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+    } else {
+      if (confirm('로그인이 필요한 서비스입니다. 로그인 하시겠습니까?.')) {
+        window.location = "http://localhost:8080/login"
+        return;
+      }
+    }
+  };
+
+  // 배송지 업데이트
+  document.getElementById("updateDeliveryAddressBtn").addEventListener('click', () => {
+
+    // JSON 객체 출력 (예시)
+    console.log(deliveryAddress);
+
+    // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+    let jwtToken = sessionStorage.getItem('jwtToken');
+
+    if (!jwtToken) {
+      if (confirm('로그인이 필요한 서비스입니다. 로그인 하시겠습니까?.')) {
+        window.location = "http://localhost:8080/login";
+      } else {
+        return; // 함수를 종료합니다.
+      }
+    } else {
+      // 요소들을 JSON 객체로 합치기
+      let deliveryAddress = {
+        postcode: document.getElementById("postcode").value, // 우편번호
+        roadAddress: document.getElementById("roadAddress").value, // 도로명주소
+        detailAddress: document.getElementById("detailAddress").value, // 상세주소
+        extraAddress: document.getElementById("extraAddress").value, // 참고항목
+        recipient_name: document.getElementById("recipient_name").value, // 받는 이
+        contact_number: document.getElementById("contact_number").value, // 연락처
+        default_address: document.getElementById("default_address").checked // 연락처
+      };
+
+      console.log(deliveryAddress);
+      // 요청 헤더에 JWT 토큰을 포함시킵니다.
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken
+      };
+
+      fetch(`http://localhost:8080/delivery_address/ordersheet/adddelivery`, {
+        method: "PUT",
+        headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
+        body: JSON.stringify(deliveryAddress),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch data');
+          }
+          return response.json();
+        })
+        .then(responseDate => {
+          console.log(responseDate.data);
+          if (responseDate.resultCode === "200") {
+            alert("배송지가 추가 되었습니다.")
+          } else if (responseDate.resultCode === "401") {
+            alert(responseDate.resultMessage);
+          } else {
+            alert(responseDate.errorMessage);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  });
+
+
+  // 모달 열기 버튼 클릭 이벤트 핸들러
+  document.getElementById('openModalBtn').addEventListener('click', function () {
+    document.getElementById('myModal').style.display = 'block';
+
+    // 세션 스토리지에서 JWT 토큰을 가져옵니다.
+    let jwtToken = sessionStorage.getItem('jwtToken');
+
+    if (!jwtToken) {
+      if (confirm('로그인이 필요한 서비스입니다. 로그인 하시겠습니까?.')) {
+        window.location = "http://localhost:8080/login";
+        return;
+      } else {
+        return; // 함수를 종료합니다.
+      }
+    } else {
+
+      let headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwtToken
+      };
+
+      // 배송지 주소 리스트
+      fetch("/delivery_address/ordersheet/retrieveDeliveryAddress", {
+        method: "GET",
+        headers: headers,
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch data');
+          }
+          return response.json();
+        })
+        .then(responseDate => {
+          console.log(responseDate.data);
+          if (responseDate.resultCode !== "200") {
+            alert(responseDate.errorMessage);
+          }
+
+          createAddressListItem(responseDate.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  });
+
+  function createAddressListItem(addressList) {
+    let deliveryAddressListUl = document.getElementById("deliveryAddressListUl");
+    addressList.forEach((address) => {
+      let addressHTML = `
+      <div>
+        <span>${address.recipientName}${address.shippingName != null ? address.shippingName : "" }
+        ${address.defaultAddress == true ? "(기본배송지)" : ""}
+        </span><button type="button" onclick="">선택</button>
+      </div>
+      <div>
+        <span>${address.contactNumber}</span>
+        <span>${address.roadAddress}${address.detailAddress}${address.extraAddress}(${address.postalCode})</span>
+     </div>
+      <div>
+
+        <button type="button" onclick="">수정</button>
+        <button type="button" onclick="">삭제</button>
+      </div>
+    `;
+      let listItem = document.createElement("li");
+
+      listItem.innerHTML = addressHTML;
+      deliveryAddressListUl.appendChild(listItem);
+
+    });
+
+  }
+
+
+  // 모달 닫기 버튼 및 모달 외부 클릭 이벤트 핸들러
+  let modal = document.getElementById('myModal');
+  let closeBtn = document.getElementsByClassName('close')[0];
+  let searchDeliveryAddressDiv = document.getElementById("searchDeliveryAddressDiv");
+  closeBtn.addEventListener('click', function () {
+    modal.style.display = 'none';
+    searchDeliveryAddressDiv.style.display = 'none';
+  });
+
+  window.addEventListener('click', function (event) {
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  document.getElementById("addressCheckBTN").addEventListener('click', () => {
+    document.getElementById('recipient_nameDiv').style.display = 'block';
+    document.getElementById('contact_numberDiv').style.display = 'block';
+  })
+
+  // 주소 스크립트
+  function execDaumPostcode() {
+
+    document.getElementById("searchDeliveryAddressDiv").style.display = 'block';
+
+    new daum.Postcode({
+      oncomplete: function (data) {
+        // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+        // 도로명 주소의 노출 규칙에 따라 주소를 표시한다.
+        // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+        let roadAddr = data.roadAddress; // 도로명 주소 변수
+        let extraRoadAddr = ''; // 참고 항목 변수
+
+        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+          extraRoadAddr += data.bname;
+        }
+        // 건물명이 있고, 공동주택일 경우 추가한다.
+        if (data.buildingName !== '' && data.apartment === 'Y') {
+          extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+        }
+        // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+        if (extraRoadAddr !== '') {
+          extraRoadAddr = ' (' + extraRoadAddr + ')';
+        }
+
+        // // 우편번호와 주소 정보를 해당 필드에 넣는다.
+        document.getElementById('postcode').value = data.zonecode;
+        document.getElementById("roadAddress").value = roadAddr;
+
+        // 참고항목 문자열이 있을 경우 해당 필드에 넣는다.
+        if (roadAddr !== '') {
+          document.getElementById("extraAddress").value = extraRoadAddr;
+          document.getElementById("roadFullAddress").value = roadAddr + extraRoadAddr + `(${data.zonecode})`;
+          document.getElementById("detailAddress").value = "";
+
+        } else {
+          document.getElementById("extraAddress").value = '';
+          document.getElementById("roadFullAddress").value = roadAddr + extraRoadAddr + `(${data.zonecode})`;
+          document.getElementById("detailAddress").value = "";
+
+        }
+
+        let guideTextBox = document.getElementById("guide");
+        // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
+        if (data.autoRoadAddress) {
+          let expRoadAddr = data.autoRoadAddress + extraRoadAddr;
+          guideTextBox.innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
+          guideTextBox.style.display = 'block';
+
+        } else if (data.autoJibunAddress) {
+          let expJibunAddr = data.autoJibunAddress;
+          guideTextBox.innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
+          guideTextBox.style.display = 'block';
+        } else {
+          guideTextBox.innerHTML = '';
+          guideTextBox.style.display = 'none';
+        }
+      }
+    }).open();
+  }
+
+  // 장바구니 목록 테이블 추가 함수
+  function displayCartItems(orderItems) {
+    const orderItemsBody = document.getElementById("orderItemsBody");
+    orderItemsBody.innerHTML = ""; // 기존 테이블 내용 초기화
+
+    orderItems.forEach((orderItems, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+                <td><input class="cartId" readonly value="${orderItems.id}"></td>
+                <td><input class="cartItemId" type="text" readonly value="${orderItems.productId}"></td>
+                <td><input class="cartItemCount"  type="number" readonly value="${orderItems.productQuantity}"></td>
+                <td><input class="cartItemPrice"  type="text" readonly value="${orderItems.totalPrice}"></td>
+      `;
+      orderItemsBody.appendChild(row);
+    });
+  }
+
+
   function kakaoPayReady() {
     // 비동기 통신
     fetch('/kakao-pay/ready', {

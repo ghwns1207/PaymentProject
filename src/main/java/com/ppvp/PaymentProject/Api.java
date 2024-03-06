@@ -18,14 +18,16 @@ public class Api<T> {
 
   private T data;
 
-  private Error error;
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  public static class Error{
-    private List<String> errorMessage;
+  private String errorMessage;
 
-  }
+//  private Error error;
+//  @Data
+//  @NoArgsConstructor
+//  @AllArgsConstructor
+//  @Builder
+//  public static class Error{
+//    private List<String> errorMessage;
+//
+//  }
 
 }

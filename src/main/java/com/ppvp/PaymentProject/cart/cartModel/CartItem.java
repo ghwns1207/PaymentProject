@@ -1,6 +1,5 @@
 package com.ppvp.PaymentProject.cart.cartModel;
 
-import com.ppvp.PaymentProject.productModel.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,15 +12,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cart_item")
-public class CartItemDto {
+public class CartItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "cart_id", referencedColumnName = "id", nullable = false)
-  private CartDto cartDto;
+  private Cart cart;
 
   @Column(name = "item_id", nullable = false)
   private Long itemId;
@@ -30,6 +29,7 @@ public class CartItemDto {
 //  @JoinColumn(name = "item_id", referencedColumnName = "product_id", nullable = false)
 //  private Product product;
 
+  @Column(name = "count", nullable = false)
   private Integer count;
 
 }

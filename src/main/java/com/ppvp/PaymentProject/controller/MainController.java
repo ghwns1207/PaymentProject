@@ -83,9 +83,9 @@ public class MainController {
 //    public String nicePay() {return "nicePay";}
 
     @GetMapping("/cartView")
-    public String cartView(Model model, HttpServletRequest request){
-        return "cartView";
+    public String cartView(){return "cartView";}
 
-    }
+    @GetMapping("/ordersheet/pay")
+    public String orderPay() { return "orderPay";}
 
 }

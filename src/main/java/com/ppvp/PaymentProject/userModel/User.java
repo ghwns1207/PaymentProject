@@ -38,9 +38,13 @@ public class User {
   @Column(name = "is_suspended" , nullable = false)
   private boolean suspended;
 
-  @ManyToOne
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_role_name", referencedColumnName = "role_name", nullable = false) // UserRole과 연동하는 컬럼
   private UserRole role; // UserRole을 참조하는 필드
+
+  @Column(name = "withdrawn_at")
+  private String withdrawnAt;
 
 
 }

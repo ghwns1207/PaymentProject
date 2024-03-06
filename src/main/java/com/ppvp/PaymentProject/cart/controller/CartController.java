@@ -2,8 +2,8 @@ package com.ppvp.PaymentProject.cart.controller;
 
 
 import com.ppvp.PaymentProject.Jwt.JwtService;
-import com.ppvp.PaymentProject.cart.cartModel.CartDto;
-import com.ppvp.PaymentProject.cart.cartModel.CartItemDto;
+import com.ppvp.PaymentProject.cart.cartModel.Cart;
+import com.ppvp.PaymentProject.cart.cartModel.CartItem;
 import com.ppvp.PaymentProject.cart.cartModel.CartModel;
 import com.ppvp.PaymentProject.cart.service.CartItemService;
 import com.ppvp.PaymentProject.cart.service.CartService;
@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,8 +38,12 @@ public class CartController {
 
 
   @PostMapping("/add_items")
-  public ResponseEntity<CartDto> addItems(@RequestBody CartModel cartModel, @RequestHeader HttpHeaders headers) {
+  public ResponseEntity<Cart> addItems(@RequestBody CartModel cartModel, @RequestHeader HttpHeaders headers) {
     log.info("cartModel : {}", cartModel);
+
+    // Spring Security를 사용하여 JWT 토큰 추출
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//    String jwtToken = (String) authentication.getCredentials();
 
     // 헤더에서 JWT 토큰 값을 가져옵니다.
     String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION);
@@ -67,11 +69,11 @@ public class CartController {
     // 프로덕트 테이블에서 아이템 이름으로 검색 아이템 아이디 받아오는 부분 추가!!
 //    findbyitemId(cartModel.getItemName());
 
-    CartDto cartDto = cartService.addCartTable(cartModel, userId);
-    cartDto.setUser(null);
-    log.info("Controller cartDto : {}", cartDto);
-    if (cartDto != null) {
-      return ResponseEntity.ok().body(cartDto);
+    Cart cart = cartService.addCartTable(cartModel, userId);
+    cart.setUser(null);
+    log.info("Controller cart : {}", cart);
+    if (cart != null) {
+      return ResponseEntity.ok().body(cart);
     } else {
       // API 클래스 느낌으로 포장후 다시 보내야함
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -97,22 +99,22 @@ public class CartController {
 //    // UUID 추출
     String uuid = headers.getFirst("uuid");
     if(uuid == null){
-      CartDto cartDto = cartService.getCartId(userId);
-      if (cartDto == null){
+      Cart cart = cartService.getCartId(userId);
+      if (cart == null){
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
       }
-      uuid = cartDto.getId();
-      log.info("uuid : {}", cartDto.getId());
+      uuid = cart.getId();
+      log.info("uuid : {}", cart.getId());
     }
 
-    Optional<List<CartItemDto>> cartItemDto1List = Optional.ofNullable(cartItemService.retrieveBasketList(uuid, userId));
+    Optional<List<CartItem>> cartItemDto1List = Optional.ofNullable(cartItemService.retrieveBasketList(uuid, userId));
 
 
     log.info("cartItemDto1List : {}", cartItemDto1List);
     if (cartItemDto1List.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     } else {
-      for (CartItemDto cartItem : cartItemDto1List.get()) cartItem.getCartDto().setUser(null);
+      for (CartItem cartItem : cartItemDto1List.get()) cartItem.getCart().setUser(null);
       return ResponseEntity.ok(cartItemDto1List);
     }
 
@@ -146,6 +148,8 @@ public class CartController {
 
   @GetMapping("/deleteItem/{cartId}")
   public ResponseEntity<String> deleteCartItem(@PathVariable(name = "cartId") String cartId, @RequestHeader HttpHeaders headers) {
+
+
 
     Long cartItemId = Long.valueOf(cartId);
     log.info("cartItemId : {}", cartItemId);
