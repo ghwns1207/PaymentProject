@@ -88,4 +88,7 @@ public class MainController {
     @GetMapping("/ordersheet/pay")
     public String orderPay() { return "orderPay";}
 
+    @GetMapping("/admin/products")
+    public String productsPage() { return "productsPage"; }
+
 }

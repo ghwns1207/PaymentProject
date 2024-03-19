@@ -54,7 +54,6 @@ public class KakaoLoginService {
 
   private final CartRepository cartRepository;
 
-
   public Optional<User> getUser(Long userid) throws Exception {
 
     return kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(userid);
@@ -65,6 +64,7 @@ public class KakaoLoginService {
    *
    * */
   public Map<String, Object> getKakaoInfo(String code) throws Exception {
+
     if (code == null) throw new Exception("Failed get authorization code");
     String reqURL = "https://kauth.kakao.com/oauth/token";
 

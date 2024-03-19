@@ -20,6 +20,7 @@ public class Api<T> {
 
   private String errorMessage;
 
+}
 //  private Error error;
 //  @Data
 //  @NoArgsConstructor
@@ -29,5 +30,3 @@ public class Api<T> {
 //    private List<String> errorMessage;
 //
 //  }
-
-}

@@ -17,5 +17,6 @@ public class DeliveryAddressModel {
   private String recipient_name;
   private String contact_number;
   private boolean default_address;
+  private String shipping_name;
 
 }

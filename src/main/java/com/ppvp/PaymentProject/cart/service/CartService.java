@@ -29,6 +29,7 @@ public class CartService {
   private final CartItemRepository cartItemRepository;
 
   public Cart addCartTable(CartModel model, Long userId) {
+
     Optional<User> userOptional = kakaoLoginRepository.findByIdAndWithdrawnIsFalse(userId);
 
     log.info("userid : {}" ,userOptional.get().getUserId());
@@ -38,10 +39,12 @@ public class CartService {
     }
     log.info("userOptional : {}" ,userOptional.get());
     // userId를 사용하여 해당 유저의 카트를 찾습니다.
+
     Optional<Cart> optionalCart = cartRepository.findCartByUser_Id(userOptional.get().getId());
     Cart cart;
+
+    // 카트가 이미 존재하는 경우 해당 카트를 사용합니다.
     if (optionalCart.isPresent()) {
-      // 카트가 이미 존재하는 경우 해당 카트를 사용합니다.
       cart = optionalCart.get();
       log.info("cart : {}" , cart);
     } else {
@@ -62,13 +65,14 @@ public class CartService {
     String itemId = model.getItemName() + model.getItemType();
 
     CartItem cartItem = CartItem.builder().cart(saveCart).itemId(6546L).count(Integer.valueOf(model.getItemQuantity())).build();
+
     CartItem savedCartItem = cartItemRepository.save(cartItem);
     if(savedCartItem == null){
       throw new RuntimeException("아이템 저장 에러");
     }
 //    cart.getCartItemDto().add(savedCartItem);
     log.info("savedCartItem : {}" , savedCartItem);
-    return cart;
+    return saveCart;
   }
 
   public Cart getCartId(Long userId){

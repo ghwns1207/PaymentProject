@@ -58,7 +58,7 @@ public class CartController {
     if (jwtService.isTokenExpired(token)) throw new IllegalArgumentException("Expired JWT token");
     Claims claims = jwtService.parseToken(token);
 
-    log.info("claims : {}",  claims);
+    log.info("claims : {}", claims);
 
     if (claims == null) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
@@ -96,16 +96,13 @@ public class CartController {
     Long userId = claims.get("userId", Long.class);
     log.info("userid : {}", userId);
 
-//    // UUID 추출
-    String uuid = headers.getFirst("uuid");
-    if(uuid == null){
-      Cart cart = cartService.getCartId(userId);
-      if (cart == null){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-      }
-      uuid = cart.getId();
-      log.info("uuid : {}", cart.getId());
+    Cart cart = cartService.getCartId(userId);
+    if (cart == null) {
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
+    String uuid = cart.getId();
+    log.info("uuid : {}", cart.getId());
+
 
     Optional<List<CartItem>> cartItemDto1List = Optional.ofNullable(cartItemService.retrieveBasketList(uuid, userId));
 
@@ -121,7 +118,8 @@ public class CartController {
   }
 
   @GetMapping("/updateCart/{cartId}/{itemCount}")
-  public ResponseEntity<?> updateCart(@PathVariable(name = "cartId") String cartId,@PathVariable(name = "itemCount") String count,@RequestHeader HttpHeaders headers){
+  public ResponseEntity<?> updateCart(@PathVariable(name = "cartId") String cartId,
+                                      @PathVariable(name = "itemCount") String count, @RequestHeader HttpHeaders headers) {
 
     log.info(count);
     Long cartItemId = Long.valueOf(cartId);
@@ -131,15 +129,15 @@ public class CartController {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해주세요.");
     }
     Claims claims = jwtService.parseToken(jwtToken);
-    if(claims.isEmpty()){
+    if (claims.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그아웃 되었습니다. 다시 로그인 해주세요.");
     }
 
     String status = cartItemService.udateCartItem(Long.valueOf(cartId), Integer.valueOf(count));
 
-    if("200".equals(status)){
+    if ("200".equals(status)) {
       return ResponseEntity.status(HttpStatus.OK).body("success");
-    }else {
+    } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("아이템 정보가 없습니다.");
     }
 
@@ -148,7 +146,6 @@ public class CartController {
 
   @GetMapping("/deleteItem/{cartId}")
   public ResponseEntity<String> deleteCartItem(@PathVariable(name = "cartId") String cartId, @RequestHeader HttpHeaders headers) {
-
 
 
     Long cartItemId = Long.valueOf(cartId);
@@ -161,15 +158,15 @@ public class CartController {
     }
 
     Claims claims = jwtService.parseToken(jwtToken);
-    if(claims.isEmpty()){
+    if (claims.isEmpty()) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그아웃 되었습니다. 다시 로그인 해주세요.");
     }
 
     String status = cartItemService.deleteCartItem(cartItemId);
 
-    if("200".equals(status)){
+    if ("200".equals(status)) {
       return ResponseEntity.ok("장바구니에서 해당 상품을 제거 했습니다.");
-    }else {
+    } else {
       return ResponseEntity.status(HttpStatus.CONFLICT).body("상품 제거 실패");
     }
   }

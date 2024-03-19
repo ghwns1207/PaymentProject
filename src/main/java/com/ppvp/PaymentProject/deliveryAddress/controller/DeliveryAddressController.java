@@ -22,7 +22,8 @@ public class DeliveryAddressController {
   private final DeliveryAddressService deliveryAddressService;
 
   @PutMapping("/ordersheet/adddelivery")
-  public ResponseEntity<Api> addDeliveryAddress(@RequestHeader HttpHeaders headers , @RequestBody DeliveryAddressModel deliveryAddressModel){
+  public ResponseEntity<Api> addDeliveryAddress(@RequestHeader HttpHeaders headers ,
+                                                @RequestBody DeliveryAddressModel deliveryAddressModel){
 
     // JWT 토큰 추출
     String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
@@ -36,14 +37,12 @@ public class DeliveryAddressController {
 
     Long userId = jwtService.parseToken(jwtToken).get("userId", Long.class);
     if(userId == null){
-//      return ResponseEntity.ok().body(Api.builder().resultCode("401").data(null).resultMessage("Unauthorized")
-//          .error(Api.Error.builder().errorMessage(Collections.singletonList("로그아웃 되었습니다.")).build()));
       return ResponseEntity.ok().body(Api.builder().resultCode("401").resultMessage("Unauthorized")
           .errorMessage("로그아웃 되었습니다.").build());
     }
 
     log.info(" Address : {}" , deliveryAddressModel);
-    Api api =  deliveryAddressService.appendDeliveryAddress(userId,deliveryAddressModel );
+    Api api =  deliveryAddressService.appendDeliveryAddress(userId,deliveryAddressModel);
     return ResponseEntity.ok().body(api);
   }
 
@@ -53,8 +52,6 @@ public class DeliveryAddressController {
     String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
     log.info("jwtToken : {}", jwtToken);
     if (jwtService.isTokenExpired(jwtToken)) {
-//      return ResponseEntity.ok().body(Api.builder().resultCode("401").data(null).resultMessage("Unauthorized")
-//          .error(Api.Error.builder().errorMessage(Collections.singletonList("로그인 상태 확인해주세요.")).build()));
 
       return ResponseEntity.ok().body(Api.builder().resultCode("401").resultMessage("Unauthorized")
           .errorMessage("로그인 상태 확인해주세요.").build());
@@ -70,6 +67,46 @@ public class DeliveryAddressController {
     Api api =  deliveryAddressService.retrieveDeliveryAddressList(userId);
 
     return ResponseEntity.ok().body(api);
+  }
+
+  @DeleteMapping("/ordersheet/deleteDeliveryAddress/{addressId}")
+  public ResponseEntity<Api> deleteDeliveryAddress(@RequestHeader HttpHeaders headers , @PathVariable(name = "addressId")Long addressId) {
+
+    // JWT 토큰 추출
+    String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
+    log.info("jwtToken : {}", jwtToken);
+    if (jwtService.isTokenExpired(jwtToken)) {
+
+      return ResponseEntity.ok().body(Api.builder().resultCode("401").resultMessage("Unauthorized")
+          .errorMessage("로그인 상태 확인해주세요.").build());
+    }
+
+    Long userId = jwtService.parseToken(jwtToken).get("userId", Long.class);
+
+
+     Api api = deliveryAddressService.deleteDeliveryAddress(userId, addressId);
+
+     return ResponseEntity.ok().body(api);
+  }
+
+  @PutMapping("/ordersheet/updateDeliveryAddress/{addressId}")
+  public void updateDeliveryAddress(@RequestHeader HttpHeaders headers, @PathVariable(name = "addressId") Long addressId) {
+    // JWT 토큰 추출
+    String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
+    log.info("jwtToken : {}", jwtToken);
+    if (jwtService.isTokenExpired(jwtToken)) {
+//      return ResponseEntity.ok().body(Api.builder().resultCode("401").data(null).resultMessage("Unauthorized")
+//          .error(Api.Error.builder().errorMessage(Collections.singletonList("로그인 상태 확인해주세요.")).build()));
+
+//      return ResponseEntity.ok().body(Api.builder().resultCode("401").resultMessage("Unauthorized")
+//          .errorMessage("로그인 상태 확인해주세요.").build());
+    }
+
+    Long userId = jwtService.parseToken(jwtToken).get("userId", Long.class);
+
+    log.info("addressId, : {}", addressId);
+
+
   }
 
 

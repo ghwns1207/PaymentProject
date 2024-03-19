@@ -23,5 +23,4 @@ public class UserRole {
   @Column(name = "role_name" )
   private String roleName;
 
-  // 생성자, getter, setter, 기타 메서드
 }

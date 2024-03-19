@@ -29,7 +29,7 @@ public class Orders {
   private User user;
 
   @Column(name = "order_status")
-  private String order_status;
+  private String order_status = "결제 준비 중";
 
   @Column(name = "delivery_cost", nullable = false)
   private Integer deliveryCost;                       // 배송비

@@ -11,11 +11,11 @@
   <p th:text="${kakaoApprove}">Property Value</p>
   <!-- 다른 속성들도 필요한대로 출력 -->
 
-  <input type="text" th:value="${kakaoApprove.getCid()}" name="cid">
-  <input type="text" th:value="${kakaoApprove.getTid()}" name="tid">
-  <input type="text" th:value="${kakaoApprove.getAmount().getTotal()}" name="cancel_amount">
-  <input type="text" th:value="${kakaoApprove.getAmount().getTax_free()}" name="cancel_tax_free_amount">
-  <input type="text" th:value="${kakaoApprove.getAmount().getVat()}" name="cancel_vat_amount">
+  <input type="text" th:value="${kakaoApprove.data.getCid()}" name="cid">
+  <input type="text" th:value="${kakaoApprove.data.getTid()}" name="tid">
+  <input type="text" th:value="${kakaoApprove.data.getAmount().getTotal()}" name="cancel_amount">
+  <input type="text" th:value="${kakaoApprove.data.getAmount().getTax_free()}" name="cancel_tax_free_amount">
+  <input type="text" th:value="${kakaoApprove.data.getAmount().getVat()}" name="cancel_vat_amount">
 
 <button th:onclick="kakaoApprovedCancel()">결제 취소</button>
 

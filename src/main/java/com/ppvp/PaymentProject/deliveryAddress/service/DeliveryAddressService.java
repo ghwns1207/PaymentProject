@@ -29,11 +29,7 @@ public class DeliveryAddressService {
     try {
       Optional<User> user = kakaoLoginRepository.findByIdAndWithdrawnIsFalse(userId);
       if (user.isEmpty()){
-        return Api.builder()
-            .resultCode("401 ")
-            .resultMessage("Unauthorized")
-            .errorMessage("유저 정보를 찾을 수 없습니다.")
-            .build();
+        return Api.builder().resultCode("401 ").resultMessage("Unauthorized").errorMessage("유저 정보를 찾을 수 없습니다.").build();
       }
 
       log.info("deliveryAddressModel :{}" , deliveryAddressModel);
@@ -49,6 +45,8 @@ public class DeliveryAddressService {
         deliveryAddressRepository.save(defaultDeliveryAddress.get());
       }
 
+
+
       DeliveryAddress deliveryAddress = deliveryAddressRepository.save(DeliveryAddress.builder().user(user.get())
           .roadAddress(deliveryAddressModel.getRoadAddress())
           .detailAddress(deliveryAddressModel.getDetailAddress())
@@ -60,24 +58,13 @@ public class DeliveryAddressService {
           .build());
 
       if (deliveryAddress == null) {
-        return Api.builder()
-            .resultCode("409 ")
-            .resultMessage("Conflict")
-            .errorMessage("저장 실패")
-            .build();
+        return Api.builder().resultCode("409 ").resultMessage("Conflict").errorMessage("저장 실패").build();
       }
       log.info("deliveryAddress : {}", deliveryAddress);
-      return Api.builder()
-          .resultCode("200")
-          .resultMessage("Success")
-          .data(defaultDeliveryAddress)
-          .build();
+      return Api.builder().resultCode("200").resultMessage("Success").data(defaultDeliveryAddress).build();
     }catch (Exception e){
       log.error("error : {}", e);
-      return Api.builder()
-          .resultCode("400")
-          .errorMessage(e.getMessage())
-          .build();
+      return Api.builder().resultCode("400").errorMessage(e.getMessage()).build();
     }
 
   }
@@ -89,18 +76,24 @@ public class DeliveryAddressService {
     log.info("deliveryAddresses :{}", deliveryAddresses);
 
     if (deliveryAddresses.isEmpty()){
-      return Api.builder()
-          .resultCode("404")
-          .resultMessage("Not Found")
-          .errorMessage("배송지 주소가 없습니다.")
-          .build();
+      return Api.builder().resultCode("404").resultMessage("Not Found").errorMessage("배송지 주소가 없습니다.").build();
     }else {
-      return Api.builder()
-          .resultCode("200")
-          .resultMessage("Success")
-          .data(deliveryAddresses)
-          .build();
+      return Api.builder().resultCode("200").resultMessage("Success").data(deliveryAddresses).build();
     }
+  }
+
+  public Api deleteDeliveryAddress(Long userId , Long addressId) {
+    try {
+      if(deliveryAddressRepository.deleteDeliveryAddressByIdAndUserId(addressId,userId)> 0){
+        return Api.builder().resultCode("200").resultMessage("Success").build();
+      }else {
+        return Api.builder().resultCode("404").resultMessage("Not Found").build();
+      }
+    }catch (Exception e){
+      log.error(e.getMessage());
+      return Api.builder().resultCode("500").resultMessage("Internal Server Error").errorMessage("서버 에러 잠시 후 다시 시도해주세요.").build();
+    }
+
   }
 
 

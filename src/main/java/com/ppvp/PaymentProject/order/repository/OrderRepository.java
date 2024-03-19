@@ -12,7 +12,9 @@ public interface OrderRepository extends JpaRepository<Orders, Long> {
 
   Optional<Orders> findOrdersByUser_Id (Long id);
 
-  Orders findOrdersByUser_IdAndOrderId(Long user_id, String order_id);
+  Optional<Orders> findOrdersByOrderId(String order_id);
+
+  Optional<Orders> findOrdersByUser_IdAndOrderId(Long user_id, String order_id);
   Orders save(Orders orders);
 
 }

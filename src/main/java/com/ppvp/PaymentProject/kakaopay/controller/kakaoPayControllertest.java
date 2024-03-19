@@ -1,7 +1,9 @@
 package com.ppvp.PaymentProject.kakaopay.controller;
 
+import com.ppvp.PaymentProject.Api;
 import com.ppvp.PaymentProject.kakaopay.model.KakaoApproveResponse;
 import com.ppvp.PaymentProject.kakaopay.service.KakaoPayService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class kakaoPayControllertest {
 
   private final KakaoPayService kakaoPayService;
+
   /**
    * 결제 진행 중 취소
    */
@@ -29,9 +32,9 @@ public class kakaoPayControllertest {
    * 결제 성공
    */
   @GetMapping("/success")
-  public String afterPayRequest(@RequestParam("pg_token") String pgToken, Model model) {
+  public String afterPayRequest(@RequestParam("pg_token") String pgToken, Model model, HttpSession session) {
 
-    KakaoApproveResponse kakaoApprove = kakaoPayService.approveResponse(pgToken);
+    Api kakaoApprove = kakaoPayService.approveResponse(pgToken , session);
     model.addAttribute("kakaoApprove", kakaoApprove);
     return "kakaosuccess";
   }

@@ -323,7 +323,6 @@
       let headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + jwtToken,
-        // 'Uuid': gcfuuid
       };
       fetch("http://localhost:8080/cart/retrieveBasket", {
         method: "GET",

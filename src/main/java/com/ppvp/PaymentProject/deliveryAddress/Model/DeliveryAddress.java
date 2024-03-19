@@ -23,9 +23,8 @@ public class DeliveryAddress {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonIgnore
-  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false) // user 연동하는 컬럼
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
-
 
   @Column(name = "road_address")
   private String roadAddress;        // 도로명

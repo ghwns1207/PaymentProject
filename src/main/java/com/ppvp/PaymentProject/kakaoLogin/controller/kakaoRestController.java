@@ -33,29 +33,37 @@ public class kakaoRestController {
   * 토큰 로그아웃
   * */
   @GetMapping("/rlogout")
-  public ResponseEntity<?> kakaoLogout(@RequestHeader("Authorization") String authorizationHeader, HttpServletRequest request ) throws Exception {
-    String jwtToken = authorizationHeader.substring(7); // "Bearer " 이후의 문자열 추출
+  public ResponseEntity<?> kakaoLogout(@RequestHeader("Authorization") String authorizationHeader
+      , HttpServletRequest request ) {
+
+    try {
+
+      String jwtToken = authorizationHeader.substring(7); // "Bearer " 이후의 문자열 추출
 
 
-    Claims claims = Jwts.parser()
-        .setSigningKey(jwtSecretKey)
-        .parseClaimsJws(jwtToken)
-        .getBody();
-    log.info("claims : {}", claims.getSubject());
-    ResponseEntity response = kakaoLoginService.kakaoLogout(claims.getSubject());
+      Claims claims = Jwts.parser()
+          .setSigningKey(jwtSecretKey)
+          .parseClaimsJws(jwtToken)
+          .getBody();
+      log.info("claims : {}", claims.getSubject());
+      ResponseEntity response = kakaoLoginService.kakaoLogout(claims.getSubject());
 //    ResponseEntity response = kakaoLoginService.kakaoOauthLogout();
-    if (response.getStatusCode().is2xxSuccessful() ){
-      log.info("response :{}", response);
-      log.info("session : {}", request.getSession() );
-      // 세션 무효화
-      request.getSession().invalidate();
-      return ResponseEntity.ok(response);
-    }else{
-      log.info("status :{}", response.getStatusCode());
-    }
-    log.info("test : {}" , response);
+      if (response.getStatusCode().is2xxSuccessful() ){
+        log.info("response :{}", response);
+        log.info("session : {}", request.getSession() );
+        // 세션 무효화
+        request.getSession().invalidate();
+        return ResponseEntity.ok(response);
+      }else{
+        log.info("status :{}", response.getStatusCode());
+      }
+      log.info("test : {}" , response);
 //    return "redirect:index";
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.getStatusCode());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.getStatusCode());
+    }catch (Exception e){
+      log.error(e.getMessage());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+    }
   }
 
 
@@ -65,7 +73,8 @@ public class kakaoRestController {
   *
   * */
   @GetMapping("/unlink")
-  public ResponseEntity<?> kakaoUnlink(@RequestHeader("Authorization") String authorizationHeader, HttpServletRequest request ) throws Exception {
+  public ResponseEntity<?> kakaoUnlink(@RequestHeader("Authorization") String authorizationHeader,
+                                       HttpServletRequest request ) throws Exception {
 
     String jwtToken = authorizationHeader.substring(7); // "Bearer " 이후의 문자열 추출
 

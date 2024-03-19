@@ -1,8 +1,14 @@
 package com.ppvp.PaymentProject.kakaopay.model.cancel;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class KakaoApprovedCancelRequest {
   private String cid;
   private String tid;
