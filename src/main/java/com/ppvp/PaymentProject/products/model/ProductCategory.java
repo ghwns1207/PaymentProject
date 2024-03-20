@@ -1,4 +1,4 @@
-package com.ppvp.PaymentProject.productModel;
+package com.ppvp.PaymentProject.products.model;
 
 
 import jakarta.persistence.*;
@@ -18,10 +18,12 @@ public class ProductCategory {
   @Id
   @Column(name = "category_id")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long categoryId;
+  private Integer categoryId;
 
   @Column(name = "category_name")
   private String categoryName;    // 카테고리 명
 
+  @Column(name = "created_by")
+  private String createdBy;
 
 }

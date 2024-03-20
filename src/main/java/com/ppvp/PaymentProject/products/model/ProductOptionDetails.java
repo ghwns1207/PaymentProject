@@ -1,4 +1,4 @@
-package com.ppvp.PaymentProject.productModel;
+package com.ppvp.PaymentProject.products.model;
 
 
 import jakarta.persistence.*;
@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "detail_option")
-public class DetailOption {
+@Table(name = "product_option_details")
+public class ProductOptionDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,11 @@ public class DetailOption {
   @JoinColumn(name = "option_id", referencedColumnName = "option_id", nullable = false)
   private ProductOption productOption;
 
-  @Column(name = "detail_option_name")
+  @Column(name = "detail_option_name", nullable = false)
   private String detailOptionName;      // 옵션 상세 이름
 
-  @Column(name = "additional_cost")
-  private Integer additionalCost;       // 추가 금액
+  @Column(name = "additional_cost" ,nullable = false)
+  private Integer additionalFee;       // 추가 금액
 
 
 

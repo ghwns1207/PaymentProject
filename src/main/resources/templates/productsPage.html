@@ -5,6 +5,64 @@
   <title>Title</title>
 </head>
 <body>
+<div>
+  <h2>카테고리</h2>
+  <label for="">카테고리 명 : </label>
+  <input id="category_name" type="text" required>
+  <button type="button" onclick="categoryEvn()">저장</button>
+</div>
+
+<script>
+  function categoryEvn() {
+    let category_name = document.getElementById("category_name");
+    console.log(category_name.value);
+
+    fetch("/admin/product/addCategory?categoryName=" + category_name.value ,{
+      method : "GET"
+    })
+      .then()
+      .then()
+      .catch();
+  }
+</script>
+
+<form action="">
+  <h2>상품</h2>
+  <label>상품 명 : </label>
+  <input type="text">
+  <label>상품 가격 명 : </label>
+  <input type="text">
+  <label>상품 상세 설명 : </label>
+  <textarea maxlength="80" style="width: 300px; height: 200px;"></textarea>
+  <button>저장</button>
+</form>
+
+<form action="">
+  <h2>상품 옵션</h2>
+  <label>옵션 명 : </label>
+  <input type="text">
+  <label>옵션 상세 명 : </label>
+  <input type="text">
+  <label>옵션 추가 비용 : </label>
+  <input type="text">
+  <button>저장</button>
+</form>
+
+<form action="">
+  <h2>상품 이미지</h2>
+  <label>이미지 명</label>
+  <input type="text">
+  <label>메인 이미지 : </label>
+  <input type="file">
+  <label>서브 이미지 1 : </label>
+  <input type="file">
+  <label>서브 이미지 2 : </label>
+  <input type="file">
+  <label>서브 이미지 3 : </label>
+  <input type="file">
+  <label>서브 이미지 4 : </label>
+  <input type="file">
+</form>
 
 </body>
 </html>

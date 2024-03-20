@@ -2,7 +2,7 @@ package com.ppvp.PaymentProject.order.model;
 
 
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddress;
-import com.ppvp.PaymentProject.productModel.Product;
+import com.ppvp.PaymentProject.products.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

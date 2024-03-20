@@ -1,4 +1,4 @@
-package com.ppvp.PaymentProject.productModel;
+package com.ppvp.PaymentProject.products.model;
 
 
 import jakarta.persistence.*;
@@ -20,20 +20,17 @@ public class Product {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long productId;
 
-  @Column(name = "product_name")
+  @Column(name = "product_name" , nullable = false)
   private String productName;    // 상품명
 
-  @ManyToOne
-  @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false) // ProductCategory 연동하는 컬럼
-  private ProductCategory productCategory;   // 상품 카테고리
 
-  @Column(name = "product_price")
+  @Column(name = "product_price", nullable = false)
   private Integer productPrice;      // 상품 가격
 
   @Column(name = "detail_description")
   private String detailDescription;   // 상품 상세 설명
 
-
-
+  @Column(name = "created_by" , nullable = false)
+  private String created_by;
 
 }
