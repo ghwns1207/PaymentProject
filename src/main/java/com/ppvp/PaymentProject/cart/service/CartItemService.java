@@ -52,16 +52,22 @@ public class CartItemService {
 
   }
 
-  public String udateCartItem(Long cartItemId,Integer count ){
+  public String udateCartItem(Long cartItemId,Integer count ) {
 
-    Optional<CartItem> optionalCartItemDto = cartItemRepository.findCartItemById(cartItemId);
-    if (optionalCartItemDto.isPresent()){
-      CartItem cartItem = optionalCartItemDto.get();
-      cartItem.setCount(count);
-      cartItemRepository.save(cartItem);
-      return "200";
-    }else{
-      return "404";
+    try {
+      Optional<CartItem> optionalCartItemDto = cartItemRepository.findCartItemById(cartItemId);
+      if (optionalCartItemDto.isPresent()) {
+        CartItem cartItem = optionalCartItemDto.get();
+        cartItem.setCount(count);
+        cartItemRepository.save(cartItem);
+        return "200";
+      }else {
+        return "404";
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+      return e.getMessage().toString();
     }
   }
+
 }

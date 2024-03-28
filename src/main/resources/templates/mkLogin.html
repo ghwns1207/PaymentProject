@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="container" class="container">
+  <!-- FORM SECTION -->
+  <div class="row">
+    <!-- SIGN UP -->
+    <div class="col align-items-center flex-col sign-up">
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-up">
+          <span class="required-items">필수 항목입니다.</span>
+          <div class="input-group">
+            <span class='bx bxs-user required'></span>
+            <input type="text" id="input_userName" placeholder="UserName" required>
+          </div>
+          <div class="input-group">
+            <span class='bx bxs-userId required'></span>
+            <input type="text" id="input_userId" placeholder="UserId" required>
+          </div>
+          <div class="input-group">
+            <span class='bx bx-mail-send required'></span>
+            <input type="email" id="input_email" placeholder="Email" required>
+          </div>
+          <div class="input-group">
+            <span class='bx bx-phone required'></span>
+            <input type="number" id="input_phoneNumber" placeholder="PhoneNumber" required>
+          </div>
+          <div class="input-group ">
+            <span class='bx bxs-lock-alt required'></span>
+            <input type="password" id="input_password" placeholder="Password" required>
+          </div>
+          <div class="input-group ">
+            <span class='bx bxs-lock-alt required'></span>
+            <input type="password" placeholder="Confirm password" required>
+          </div>
+          <div class="input-group">
+            <span class='bx bx-image'></span>
+            <input type="file" id="input_image" placeholder="image">
+          </div>
+          <button>회원가입</button>
+          <p>
+            <span>Already have an account?</span>
+            <b onclick="toggle()" class="pointer">Sign in here</b>
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <!-- END SIGN UP -->
+    <!-- SIGN IN -->
+    <div class="col align-items-center flex-col sign-in">
+      <div class="form-wrapper align-items-center">
+        <form class="form sign-in" action="#" method="post">
+          <div class="input-group">
+            <span class='bx bxs-user'></span>
+            <input type="text" placeholder="UserId">
+          </div>
+          <div class="input-group">
+            <span class='bx bxs-lock-alt'></span>
+            <input type="password" placeholder="Password">
+          </div>
+          <button type="submit">로그인</button>
+          <p>
+            <b>비밀번호 찾기</b>
+          </p>
+          <p>
+            <span>Don't have an account?</span>
+            <b onclick="toggle()" class="pointer">회원가입</b>
+          </p>
+        </form>
+      </div>
+      <div class="form-wrapper">
+      </div>
+    </div>
+    <!-- END SIGN IN -->
+  </div>
+  <!-- END FORM SECTION -->
+  <!-- CONTENT SECTION -->
+  <div class="row content-row">
+    <!-- SIGN IN CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="text sign-in">
+        <h2>MK LORIA FOOD</h2>
+      </div>
+      <div class="img sign-in"></div>
+    </div>
+    <!-- END SIGN IN CONTENT -->
+    <!-- SIGN UP CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="img sign-up"></div>
+      <div class="text sign-up"><h2>Join Loria Food</h2>
+      </div>
+    </div>
+    <!-- END SIGN UP CONTENT -->
+  </div>
+  <!-- END CONTENT SECTION -->
+</div>
+</body>
+</html>

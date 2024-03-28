@@ -23,7 +23,8 @@ public class ProductCategoryLink {
   @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false)
   private Product product;
 
-  @Column(name = "category_id", nullable = false)
-  private String categoryId;
+  @ManyToOne
+  @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false)
+  private ProductCategory  productCategory;
 
 }

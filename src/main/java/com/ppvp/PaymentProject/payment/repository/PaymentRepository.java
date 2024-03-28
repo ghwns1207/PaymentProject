@@ -1,13 +1,13 @@
 package com.ppvp.PaymentProject.payment.repository;
 
-import com.ppvp.PaymentProject.payment.model.PaymentDto;
+import com.ppvp.PaymentProject.payment.model.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PaymentRepository extends JpaRepository<PaymentDto , Long> {
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
 
-  PaymentDto save(PaymentDto paymentDto);
+  Payment save(Payment payment);
 
-  void deletePaymentDtoByOrders_OrderId(String order_id);
+  void deletePaymentByOrders_OrderId(String order_id);
 
 }

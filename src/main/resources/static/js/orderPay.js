@@ -104,7 +104,7 @@ document.getElementById("updateDeliveryAddressBtn").addEventListener('click', ()
     };
 
     // 배송지 추가
-    fetch(`http://localhost:8080/delivery_address/ordersheet/adddelivery`, {
+    fetch(`http://localhost:8080/delivery_address/ordersheet/add_delivery`, {
       method: "PUT",
       headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
       body: JSON.stringify(deliveryAddress),
@@ -440,5 +440,5 @@ function kakaoPayReady() {
         console.error('Error:', error);
       });
   }
-
+  
 }

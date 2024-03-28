@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Entity
 @Builder
@@ -28,6 +30,6 @@ public class ProductImage {
   private String imageDescription;     // 이미지 설명
 
   @Column(name = "created_by")
-  private String createdBy;     // 메인 이미지 2
+  private Date createdBy;     // 메인 이미지 2
 
 }

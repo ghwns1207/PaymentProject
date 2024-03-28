@@ -3,7 +3,6 @@ package com.ppvp.PaymentProject.payment.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ppvp.PaymentProject.order.model.Orders;
-import com.ppvp.PaymentProject.userModel.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "payment")
-public class PaymentDto {
+public class Payment {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

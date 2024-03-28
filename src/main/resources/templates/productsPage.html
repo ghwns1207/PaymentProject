@@ -7,62 +7,546 @@
 <body>
 <div>
   <h2>카테고리</h2>
-  <label for="">카테고리 명 : </label>
-  <input id="category_name" type="text" required>
-  <button type="button" onclick="categoryEvn()">저장</button>
+  <label for="category_name">카테고리 명 : </label>
+  <input id="category_name" type="text">
+  <button type="button" onclick="categoryAddEvn()">저장</button>
+</div>
+
+<div>
+  <h2>상품</h2>
+  <label>상품 명 : </label>
+  <input id="product_name" type="text">
+  <div>
+    <label>상품 카테고리</label>
+    <select id="product_category">
+    </select>
+    <button onclick="retrieveCategory()">조회</button>
+  </div>
+  <label>상품 가격 : </label>
+  <input id="product_price" type="text">
+  <label>상품 상세 설명 : </label>
+  <textarea id="detail_description" maxlength="80" style="width: 250px; height: 200px;"></textarea>
+  <button onclick="productAddEnv()">저장</button>
+</div>
+
+<div>
+  <h2 style="display: inline-block;">상품 조회</h2>
+  <button type="button" id="retrieveProductBtn" onclick="dividedRetrieveProduct()">조회</button>
+  <table border="1px" style="border-collapse: collapse">
+    <thead>
+    <tr>
+      <th>상품 코드</th>
+      <th>상품 명</th>
+      <th>상품 가격</th>
+      <th>상품 상세</th>
+      <th>관리자</th>
+      <th>생성 시간</th>
+    </tr>
+    </thead>
+
+    <tbody id="product_tbody">
+
+    </tbody>
+  </table>
+  <div id="pagination">
+    <span id="prevPage">&lt;</span>
+    <span id="nextPage">&gt;</span>
+  </div>
+</div>
+
+<div>
+  <h2>상품 검색</h2>
+  <input type="radio" id="product_code_radio" name="searchType" value="1" checked>
+  <label for="product_code_radio">상품 코드</label>
+  <input type="radio" id="product_name_radio" name="searchType" value="2">
+  <label for="product_name_radio">상품 명</label>
+  <input type="text" id="search_product_data" placeholder="정보를 입력해주세요.">
+  <button type="button" onclick="searchProduct()">검색</button>
+
+  <table border="1px" style="border-collapse: collapse">
+    <thead>
+    <tr>
+      <th>상품 코드</th>
+      <th>상품 명</th>
+      <th>상품 가격</th>
+      <th>상품 상세</th>
+      <th>관리자</th>
+      <th>생성 시간</th>
+    </tr>
+    </thead>
+
+    <tbody id="product_search_tbody">
+
+    </tbody>
+  </table>
+</div>
+
+<div>
+  <h2>상품 옵션 추가</h2>
+  <label for="product_id">상품 코드 :</label>
+  <input id="product_id" type="text">
+  <label for="option_name">옵션 명 : </label>
+  <input id="option_name" type="text">
+  <label for="option_detail_name">옵션 상세 명 : </label>
+  <input id="option_detail_name" type="text">
+  <label for="option_detail_cost">옵션 추가 비용 : </label>
+  <input id="option_detail_cost" type="text">
+  <button onclick="productAddOptionEvn()">저장</button>
+</div>
+
+<div>
+  <h2>상품 이미지</h2>
+  <label>이미지 명</label>
+  <input type="text" id="image_name">
+  <label>메인 이미지 : </label>
+  <input type="file"  id="main_image"  class="input_image">
+  <label>서브 이미지 1 : </label>
+  <input type="file"  id="sub_image1" class="input_image">
+  <label>서브 이미지 2 : </label>
+  <input type="file"  id="sub_image2" class="input_image">
+  <label>서브 이미지 3 : </label>
+  <input type="file"  id="sub_image3" class="input_image">
+  <label>서브 이미지 4 : </label>
+  <input type="file" id="sub_image4" class="input_image">
+  <button type="button" onclick="productAddImageEvn()">저장</button>
 </div>
 
 <script>
-  function categoryEvn() {
+
+  /**
+   *  상품 이미지 추가
+   * */
+
+  function productAddImageEvn() {
+    let image_name = document.getElementById("image_name").value;
+    let fileInputs = document.querySelectorAll(".input_image");
+    let formData = new FormData();
+
+    formData.append('image_name', image_name);
+
+    fileInputs.forEach(input => {
+      if (input.files[0]) {
+        formData.append(input.id, input.files[0]);
+      }
+    });
+
+    fetch('/admin/image/addImage', {
+      method: 'POST',
+      // headers: {
+      //   "Content-Type": "multipart/form-data" // 멀티파트 폼 데이터임을 명시
+      // },
+      body:formData,
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Handle success response
+        console.log(data);
+      })
+      .catch(error => {
+        // Handle error
+        console.error('There was an error!', error);
+      });
+
+  }
+
+  /**
+   * 상품 옵션 추가
+   * */
+  function productAddOptionEvn(){
+    let product_id = document.getElementById("product_id");
+    let option_name = document.getElementById("option_name");
+    let option_detail_name = document.getElementById("option_detail_name");
+    let option_detail_cost = document.getElementById("option_detail_cost");
+
+    let data = {
+      product_id: product_id.value,
+      option_name: option_name.value,
+      option_detail_name: option_detail_name.value,
+      option_detail_cost: option_detail_cost.value
+    }
+
+    fetch( "/admin/option/addOption", {
+        method : "POST",
+        headers: {
+          "Content-Type": "application/json" // 요청 본문의 미디어 타입을 JSON으로 설정합니다.
+        },
+        body: JSON.stringify(data),
+      }
+    ).then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      return response.json();
+    }).then(resData => {
+      if(resData.resultCode === "200"){
+        alert(resData.data);
+      }else{
+        alert(resData.errorMessage);
+      }
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+
+  /**
+   * 상품 검색 by code or name or code+name
+   * */
+  function searchProduct() {
+    let product_code = document.getElementById("product_code_radio");
+    let product_name = document.getElementById("product_name_radio");
+    let search_product_data = document.getElementById("search_product_data");
+
+    let searchType;
+
+    if (product_code.checked) {
+      searchType = product_code.value;
+      let inputValue = search_product_data.value.trim();
+
+      if(inputValue.length === 0) {
+        alert("정보를 입력해주세요.");
+        search_product_data.focus();
+        return;
+      }
+      let regex = /^[0-9]+$/; // 숫자로만 이루어진 문자열을 위한 정규표현식
+      // 입력 값이 숫자로만 이루어져 있는지 확인
+      if (!regex.test(inputValue)) {
+        alert("숫자만 입력해주세요.");
+        search_product_data.value = "";
+        return; // 숫자가 아닌 경우 함수 종료
+      }
+
+    } else if (product_name.checked) {
+      searchType = product_name.value;
+    } else {
+      // 어느 라디오 버튼도 선택되지 않은 경우
+      alert("검색 유형을 선택해주세요.");
+      return; // 함수 종료
+    }
+
+    if (!search_product_data.value) {
+      alert("정보를 입력해주세요.")
+      search_product_data.focus();
+      return;
+    }/*else if (product_name.checked && search_product_data.value.length < 2){
+      alert("두 글자 이상 입력해주세요.");
+    }*/
+    let searchInfo = search_product_data.value;
+
+    fetch(`/admin/product/searchProductBy/${searchType}/${searchInfo}` , {
+      method : "GET"
+    })
+      .then(response => {
+        if(response.ok){
+          return response.json();
+        }else{
+          console.log(response.json());
+        }
+      })
+      .then(resData => {
+        if(resData.resultCode === "200"){
+          console.log(resData.data);
+          searchRetrieveProduct(resData.data);
+        }else{
+          alert(resData.errorMessage);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * 상품 조회 정보 테이블 출력 함수
+   * */
+  function searchRetrieveProduct(products) {
+    let tbody = document.getElementById('product_search_tbody');
+    tbody.innerHTML = ''; // 테이블 초기화
+
+    if (Array.isArray(products)) {
+      // 받은 상품 데이터를 테이블에 추가
+      products.forEach(product => {
+        let row = `
+                <tr>
+                    <td>${product.productId}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.productPrice}</td>
+                    <td>${product.detailDescription}</td>
+                    <td>${product.created_by}</td>
+                    <td>${product.created_at}</td>
+                </tr>`;
+        tbody.innerHTML += row;
+      });
+    }else{
+      let row = `
+                <tr>
+                    <td>${products.productId}</td>
+                    <td>${products.productName}</td>
+                    <td>${products.productPrice}</td>
+                    <td>${products.detailDescription}</td>
+                    <td>${products.created_by}</td>
+                    <td>${products.created_at}</td>
+                </tr>`;
+      tbody.innerHTML += row;
+    }
+  }
+
+  /**
+   * 상품 조회 페이징
+   * */
+  function dividedRetrieveProduct(page) {
+    let endPoint;
+    if (page) {
+      endPoint = "/admin/product/dividedRetrieveProduct?page=" + page
+    } else {
+      endPoint = "/admin/product/dividedRetrieveProduct"
+    }
+
+    fetch(endPoint, {
+      method: "GET",
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then(resData => {
+        if (resData.resultCode === "200") {
+          updateTable(resData.data);
+          // 공백을 기준으로 문자열을 분리하여 배열로 저장
+          let parts = resData.errorMessage.split(' ');
+
+          // 토탈사이즈와 커런트 페이지 추출
+          let totalPages = parseInt(parts[0]);
+          let currentPage = parseInt(parts[1]);
+
+          renderPageNumbers(totalPages, currentPage + 1);
+        } else {
+          alert(resData.errorMessage);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * 페이징 네이션
+   * */
+  function renderPageNumbers(totalPages, currentPage) {
+    const paginationContainer = document.getElementById('pagination');
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+
+    // 버튼 초기 상태 설정
+    prevPageButton.style.cursor = currentPage > 1 ? "pointer" : "";
+    nextPageButton.style.cursor = currentPage < totalPages ? "pointer" : "";
+
+    // 버튼 초기 상태 설정
+    prevPageButton.style.pointerEvents = currentPage > 1 ? "auto" : "none";
+    nextPageButton.style.pointerEvents = currentPage < totalPages ? "auto" : "none";
+
+    const children = Array.from(paginationContainer.children);
+
+    for (const child of children) {
+      if (child !== prevPageButton && child !== nextPageButton) {
+        paginationContainer.removeChild(child);
+      }
+    }
+    console.log(currentPage)
+
+    for (let i = 1; i <= totalPages; i++) {
+      let pageNumberSpan = document.createElement('span');
+      pageNumberSpan.innerText = i;
+      pageNumberSpan.onclick = function () {
+        console.log(i);
+        if (currentPage !== i) dividedRetrieveProduct(i - 1);
+      };
+      if (i === currentPage) {
+        pageNumberSpan.classList.add('active');
+      }
+      // 스팬에 마진 추가
+      pageNumberSpan.style.marginRight = "10px"; // 예시: 5px 마진 추가
+      pageNumberSpan.style.cursor = "pointer";
+      paginationContainer.insertBefore(pageNumberSpan, nextPageButton);
+    }
+
+    // 이전 페이지 버튼 클릭 이벤트 핸들러
+    prevPageButton.onclick = function () {
+      if (currentPage > 1) {
+        dividedRetrieveProduct(currentPage - 2);
+      }
+    };
+
+// 다음 페이지 버튼 클릭 이벤트 핸들러
+    nextPageButton.onclick = function () {
+      if (currentPage < totalPages) {
+        dividedRetrieveProduct(currentPage);
+      }
+    };
+  }
+
+  function updateTable(products) {
+    let tbody = document.getElementById('product_tbody');
+    tbody.innerHTML = ''; // 테이블 초기화
+
+    // 받은 상품 데이터를 테이블에 추가
+    products.forEach(product => {
+      let row = `
+                <tr>
+                    <td>${product.productId}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.productPrice}</td>
+                    <td>${product.detailDescription}</td>
+                    <td>${product.created_by}</td>
+                    <td>${product.created_at}</td>
+                </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  /**
+   * 상품 추가
+   * */
+  function productAddEnv() {
+    let product_name = document.getElementById("product_name");
+    let product_price = document.getElementById("product_price");
+    let detail_description = document.getElementById("detail_description");
+
+    // select 요소를 가져옵니다.
+    let product_category = document.getElementById("product_category");
+
+    let productData = {
+      product_name: product_name.value,
+      product_price: product_price.value,
+      detail_description: detail_description.value,
+      product_category: product_category.value
+    };
+
+    // 상품 데이터 반복하여 값이 비어 있는 경우 해당 입력 필드로 포커스 이동
+    for (let key in productData) {
+      if (!productData[key]) {
+        // 값이 비어 있는 입력 필드로 포커스 이동
+        document.getElementById(key).focus();
+        switch (key) {
+          case "product_name":
+            alert("상품 명을 입력해주세요.")
+            break;
+          case "product_price":
+            alert("상품 가격을 입력해주세요.")
+            break;
+          case "detail_description":
+            alert("상품 상세를 입력해주세요.")
+            break;
+          case "product_category":
+            alert("카테고리를 선택해주세요.")
+            break;
+        }
+        // 포커스 이동 후 반복문 종료
+        return;
+      }
+    }
+    fetch("/admin/product/addProduct", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(productData),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then(resData => {
+        if (resData.resultCode === "200") {
+          alert("상품 " + resData.data.productName + "을(룰) 추가했습니다.");
+        } else {
+          alert(resData.errorMessage);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  /**
+   * 카테고리 추가
+   * */
+  function categoryAddEvn() {
     let category_name = document.getElementById("category_name");
     console.log(category_name.value);
 
-    fetch("/admin/product/addCategory?categoryName=" + category_name.value ,{
-      method : "GET"
+    if (!category_name.value) {
+      alert("카테고리를 입력해주세요.");
+      return;
+    }
+    fetch("/admin/category/addCategory?categoryName=" + category_name.value, {
+      method: "POST"
     })
-      .then()
-      .then()
-      .catch();
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then(resData => {
+        if (resData.resultCode === "200") {
+          alert(resData.data);
+        } else {
+          alert(resData.errorMessage);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }
+
+  /**
+   * 카테고리 조회
+   * */
+  function retrieveCategory() {
+    let product_category = document.getElementById("product_category");
+    // 기존 옵션 제거
+    product_category.innerHTML = "";
+    fetch("/admin/category/retrieveCategory", {
+      method: "GET"
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response.json();
+      })
+      .then(resData => {
+        if (resData.resultCode === "200") {
+          console.log(resData.data);
+          // 각 카테고리마다 옵션 생성 및 추가
+          resData.data.forEach(category => {
+            let option = document.createElement("option");
+            option.value = category.categoryId; // 필요시 값을 설정
+            option.text = category.categoryName;
+            product_category.add(option);
+          });
+        } else {
+          alert(resData.errorMessage);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+  }
+
+
 </script>
-
-<form action="">
-  <h2>상품</h2>
-  <label>상품 명 : </label>
-  <input type="text">
-  <label>상품 가격 명 : </label>
-  <input type="text">
-  <label>상품 상세 설명 : </label>
-  <textarea maxlength="80" style="width: 300px; height: 200px;"></textarea>
-  <button>저장</button>
-</form>
-
-<form action="">
-  <h2>상품 옵션</h2>
-  <label>옵션 명 : </label>
-  <input type="text">
-  <label>옵션 상세 명 : </label>
-  <input type="text">
-  <label>옵션 추가 비용 : </label>
-  <input type="text">
-  <button>저장</button>
-</form>
-
-<form action="">
-  <h2>상품 이미지</h2>
-  <label>이미지 명</label>
-  <input type="text">
-  <label>메인 이미지 : </label>
-  <input type="file">
-  <label>서브 이미지 1 : </label>
-  <input type="file">
-  <label>서브 이미지 2 : </label>
-  <input type="file">
-  <label>서브 이미지 3 : </label>
-  <input type="file">
-  <label>서브 이미지 4 : </label>
-  <input type="file">
-</form>
 
 </body>
 </html>

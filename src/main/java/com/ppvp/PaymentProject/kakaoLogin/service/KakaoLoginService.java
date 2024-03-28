@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class KakaoLoginService {
 
-  @Value("${kakao.clientTest.secret.key}")
-  private String clientSecret;
+  @Value("${kakao.restApiTestApp.key}")
+  private String clientId;    // 앱 REST API 키
 
-  @Value("${kakao.restApi.key}")
-  private String clientId;
+  @Value("${kakao.clientTestAppSecret.key}")
+  private String clientSecret;    //
 
   @Value("${kakao.redirectTest.uri}")
   private String kakaoRediretUri;
@@ -54,14 +54,13 @@ public class KakaoLoginService {
 
   private final CartRepository cartRepository;
 
-  public Optional<User> getUser(Long userid) throws Exception {
+  public Optional<User> getUser(String userid) throws Exception {
 
     return kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(userid);
   }
 
-  /*
+  /**
    * 카카오 서버 측으로 받은 인가 코드로 로그인 요청
-   *
    * */
   public Map<String, Object> getKakaoInfo(String code) throws Exception {
 
@@ -94,31 +93,30 @@ public class KakaoLoginService {
       Map<String, Object> response = new HashMap<>();
       response.put("kakaoProfile", kakaoProfile);
       response.put("kakaoLoginResponse", kakaoLoginResponse);
-      if (kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(kakaoProfile.getId()).isEmpty()) {
-        if (kakaoProfile.getId() != null) {
-          String checkPhoneNumber = kakaoProfile.getKakao_account().getPhone_number();
-          if (checkPhoneNumber.contains("+82")) {
-            String userPhoneNumber = checkPhoneNumber.replaceAll("\\+82", "0").replaceAll("\\s+", "");
-            log.info("userPhoneNumber : {}", userPhoneNumber);
-            // UserRole 객체 조회
-            UserRole userRole = userRoleRepository.findById(3L)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
 
-            User user = User.builder()
-                .userId(kakaoProfile.getId())
-                .name(kakaoProfile.getKakao_account().getName())
-                .email(kakaoProfile.getKakao_account().getEmail())
-                .image(kakaoProfile.getProperties().getThumbnail_image())
-                .phoneNumber(userPhoneNumber)
-                .role(userRole)
-                .withdrawn(false)
-                .suspended(false)
-                .build();
-            kakaoLoginRepository.save(user);
-            log.info("user : {}", user);
+      if (kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(String.valueOf(kakaoProfile.getId())).isEmpty()) {
+        UserRole userRole = userRoleRepository.findById(3L)
+            .orElseThrow(() -> new RuntimeException("Role not found"));
+        String userPhoneNumber = "";
+        if (kakaoProfile.getKakao_account().getPhone_number() != null) {
+          if (kakaoProfile.getKakao_account().getPhone_number().contains("+82")) {
+            userPhoneNumber = kakaoProfile.getKakao_account().getPhone_number()
+                .replaceAll("\\+82", "0").replaceAll("\\s+", "");
+            log.info("userPhoneNumber : {}", userPhoneNumber);
           }
         }
-
+        User user = User.builder()
+            .userId(String.valueOf(kakaoProfile.getId()))
+            .name(kakaoProfile.getKakao_account().getName())
+            .email(kakaoProfile.getKakao_account().getEmail())
+            .image(kakaoProfile.getProperties().getThumbnail_image())
+            .phoneNumber(userPhoneNumber)
+            .role(userRole)
+            .withdrawn(false)
+            .suspended(false)
+            .build();
+        kakaoLoginRepository.save(user);
+        log.info("user : {}", user);
       }
       return response;
     } catch (Exception e) {
@@ -127,9 +125,8 @@ public class KakaoLoginService {
     }
   }
 
-  /*
+  /**
    * accessToken으로 사용자 정보 요청
-   *
    * */
   private KakaoProfile getUserInfoWithToken(String accessToken) throws Exception {
     String reqURL = "https://kapi.kakao.com/v2/user/me";
@@ -147,9 +144,8 @@ public class KakaoLoginService {
     return kakaoProfile;
   }
 
-  /*
+  /**
    *  accessToken 토큰으로 로그아웃
-   *
    * */
 //  public boolean kakaoLogout(String accessToken){
 //    String reqURL = "https://kapi.kakao.com/v1/user/logout";
@@ -192,9 +188,8 @@ public class KakaoLoginService {
 //  }
 
 
-  /*
+  /**
    *  Rest 로그아웃
-   *
    * */
   public ResponseEntity<?> kakaoLogout(String accessToken) {
     String reqURL = "https://kapi.kakao.com/v1/user/logout";
@@ -283,9 +278,11 @@ public class KakaoLoginService {
 
       // id 값이 있는지 확인
       if (rootNode.has("id")) {
+
+        Long unlinkId = rootNode.get("id").asLong();
+
         // 루트 노드에서 ID 추출
-        Long userId = rootNode.get("id").asLong();
-        Optional<User> userOptional = kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(userId);
+        Optional<User> userOptional = kakaoLoginRepository.findByUserIdAndWithdrawnIsFalse(String.valueOf(unlinkId));
         if (userOptional.isEmpty()) {
           return ResponseEntity.status(response.getStatusCode()).body("회원탈퇴 ID를 확인해주세요 실패!");
         }

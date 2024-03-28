@@ -1,22 +1,16 @@
 package com.ppvp.PaymentProject.order.controller;
 
 
-import com.ppvp.PaymentProject.Api;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.Jwt.JwtService;
-import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddress;
-import com.ppvp.PaymentProject.deliveryAddress.service.DeliveryAddressService;
-import com.ppvp.PaymentProject.order.model.OrderDetails;
-import com.ppvp.PaymentProject.order.model.Orders;
 import com.ppvp.PaymentProject.order.service.OrderService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

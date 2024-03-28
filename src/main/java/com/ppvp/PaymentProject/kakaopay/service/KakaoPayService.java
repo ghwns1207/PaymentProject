@@ -1,12 +1,11 @@
 package com.ppvp.PaymentProject.kakaopay.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.ppvp.PaymentProject.Api;
+import com.ppvp.PaymentProject.payment.model.Payment;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.delivery.model.Delivery;
 import com.ppvp.PaymentProject.delivery.repository.DeliveryRepository;
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddress;
 import com.ppvp.PaymentProject.deliveryAddress.repository.DeliveryAddressRepository;
-import com.ppvp.PaymentProject.kakaoLogin.repository.KakaoLoginRepository;
 import com.ppvp.PaymentProject.kakaopay.model.KakaoApproveResponse;
 import com.ppvp.PaymentProject.kakaopay.model.KakaoReadyResponse;
 import com.ppvp.PaymentProject.kakaopay.model.cancel.KakaoApprovedCancelRequest;
@@ -15,9 +14,7 @@ import com.ppvp.PaymentProject.order.model.OrderDetails;
 import com.ppvp.PaymentProject.order.model.Orders;
 import com.ppvp.PaymentProject.order.repository.OrderDetailRepository;
 import com.ppvp.PaymentProject.order.repository.OrderRepository;
-import com.ppvp.PaymentProject.payment.model.PaymentDto;
 import com.ppvp.PaymentProject.payment.repository.PaymentRepository;
-import com.ppvp.PaymentProject.userModel.User;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -154,7 +151,7 @@ public class KakaoPayService {
               session.getAttribute("partner_order_id").toString());
       orders.get().setOrder_status("결제 완료");
 
-      PaymentDto paymentDto = PaymentDto.builder()
+      Payment payment = Payment.builder()
           .orders(orders.get())
           .tid(approveResponse.getTid())
           .amount_total(approveResponse.getAmount().getTotal())
@@ -166,9 +163,9 @@ public class KakaoPayService {
           .payment_method_type(approveResponse.getPayment_method_type())
           .build();
 
-      log.info("paymentDto : {}", paymentDto);
+      log.info("payment : {}", payment);
 
-      if (paymentRepository.save(paymentDto) == null) {
+      if (paymentRepository.save(payment) == null) {
         // 결제 테이블 저장 중 오류 발생 시 결제 취소 처리
         log.info("실패");
         KakaoApprovedCancelRequest kakaoApprovedCancelRequest = KakaoApprovedCancelRequest.builder()
@@ -234,7 +231,7 @@ public class KakaoPayService {
       Optional<Orders> orders = orderRepository.findOrdersByOrderId(kakaoApprovedCancelResponse.getPartner_order_id());
 
       deliveryRepository.deleteDeliveryByOrders_OrderId(kakaoApprovedCancelResponse.getPartner_order_id());
-      paymentRepository.deletePaymentDtoByOrders_OrderId(kakaoApprovedCancelResponse.getPartner_order_id());
+      paymentRepository.deletePaymentByOrders_OrderId(kakaoApprovedCancelResponse.getPartner_order_id());
 
 
       if (orders.isEmpty()) {

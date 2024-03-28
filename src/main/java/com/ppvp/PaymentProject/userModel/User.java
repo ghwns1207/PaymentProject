@@ -21,16 +21,17 @@ public class User {
   private String name;
 
   @Column(name = "user_id", nullable = false )
-  private Long userId;
+  private String userId;
 
   @Column(name = "email", nullable = false)
   private String email;
 
+  @Column(name = "phone_number", nullable = false)
+  private String phoneNumber;
+
   @Column(name = "image")
   private String image;
 
-  @Column(name = "phone_number", nullable = false)
-  private String phoneNumber;
 
   @Column(name = "is_withdrawn", nullable = false)
   private boolean withdrawn;

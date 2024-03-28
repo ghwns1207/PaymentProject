@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Builder
@@ -32,5 +34,9 @@ public class Product {
 
   @Column(name = "created_by" , nullable = false)
   private String created_by;
+
+  @Column(name = "created_at",nullable = false ,columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  private LocalDateTime created_at;
+
 
 }

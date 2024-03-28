@@ -1,10 +1,9 @@
 package com.ppvp.PaymentProject.deliveryAddress.controller;
 
-import com.ppvp.PaymentProject.Api;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.Jwt.JwtService;
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddressModel;
 import com.ppvp.PaymentProject.deliveryAddress.service.DeliveryAddressService;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +20,7 @@ public class DeliveryAddressController {
 
   private final DeliveryAddressService deliveryAddressService;
 
-  @PutMapping("/ordersheet/adddelivery")
+  @PutMapping("/ordersheet/add_delivery")
   public ResponseEntity<Api> addDeliveryAddress(@RequestHeader HttpHeaders headers ,
                                                 @RequestBody DeliveryAddressModel deliveryAddressModel){
 

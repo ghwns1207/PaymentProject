@@ -1,4 +1,4 @@
-package com.ppvp.PaymentProject;
+package com.ppvp.PaymentProject.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

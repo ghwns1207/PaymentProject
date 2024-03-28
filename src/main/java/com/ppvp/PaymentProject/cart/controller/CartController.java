@@ -8,6 +8,8 @@ import com.ppvp.PaymentProject.cart.cartModel.CartModel;
 import com.ppvp.PaymentProject.cart.service.CartItemService;
 import com.ppvp.PaymentProject.cart.service.CartService;
 
+import com.ppvp.PaymentProject.utils.Api;
+import com.ppvp.PaymentProject.utils.ApiResponseUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +40,7 @@ public class CartController {
 
 
   @PostMapping("/add_items")
-  public ResponseEntity<Cart> addItems(@RequestBody CartModel cartModel, @RequestHeader HttpHeaders headers) {
+  public ResponseEntity<Api> addItems(@RequestBody CartModel cartModel, @RequestHeader HttpHeaders headers) {
     log.info("cartModel : {}", cartModel);
 
     // Spring Security를 사용하여 JWT 토큰 추출
@@ -69,26 +71,20 @@ public class CartController {
     // 프로덕트 테이블에서 아이템 이름으로 검색 아이템 아이디 받아오는 부분 추가!!
 //    findbyitemId(cartModel.getItemName());
 
-    Cart cart = cartService.addCartTable(cartModel, userId);
-    cart.setUser(null);
+    Api cart = cartService.addCartTable(cartModel, userId);
     log.info("Controller cart : {}", cart);
-    if (cart != null) {
-      return ResponseEntity.ok().body(cart);
-    } else {
-      // API 클래스 느낌으로 포장후 다시 보내야함
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
+      return ResponseEntity.ok(cart);
   }
 
   @GetMapping("/retrieveBasket")
-  public ResponseEntity<?> retrieveBasket(@RequestHeader HttpHeaders headers) {
+  public ResponseEntity<Api> retrieveBasket(@RequestHeader HttpHeaders headers) {
     log.info("headers : {}", headers);
 
     // JWT 토큰 추출
     String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
     log.info("jwtToken : {}", jwtToken);
     if (jwtService.isTokenExpired(jwtToken)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+      return ResponseEntity.ok(ApiResponseUtil.failureResponse(HttpStatus.FORBIDDEN, "로그인 정보를 확인해 주세요"));
     }
 
     Claims claims = jwtService.parseToken(jwtToken);
@@ -98,21 +94,18 @@ public class CartController {
 
     Cart cart = cartService.getCartId(userId);
     if (cart == null) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+      return ResponseEntity.ok(ApiResponseUtil.failureResponse(HttpStatus.NOT_FOUND, "장바구니 정보가 없습니다."));
     }
     String uuid = cart.getId();
     log.info("uuid : {}", cart.getId());
 
+    Optional<List<CartItem>> cartItemDtoList = Optional.ofNullable(cartItemService.retrieveBasketList(uuid, userId));
 
-    Optional<List<CartItem>> cartItemDto1List = Optional.ofNullable(cartItemService.retrieveBasketList(uuid, userId));
-
-
-    log.info("cartItemDto1List : {}", cartItemDto1List);
-    if (cartItemDto1List.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    log.info("cartItemDto1List : {}", cartItemDtoList);
+    if (cartItemDtoList.isEmpty()) {
+      return ResponseEntity.ok(ApiResponseUtil.successResponse( HttpStatus.NO_CONTENT, "장바구니 상품 정보가 없습니다. 추가해주세요"));
     } else {
-      for (CartItem cartItem : cartItemDto1List.get()) cartItem.getCart().setUser(null);
-      return ResponseEntity.ok(cartItemDto1List);
+      return ResponseEntity.ok(ApiResponseUtil.successResponse(HttpStatus.OK, cartItemDtoList.get()));
     }
 
   }
@@ -122,23 +115,22 @@ public class CartController {
                                       @PathVariable(name = "itemCount") String count, @RequestHeader HttpHeaders headers) {
 
     log.info(count);
-    Long cartItemId = Long.valueOf(cartId);
     // JWT 토큰 추출
     String jwtToken = headers.getFirst(HttpHeaders.AUTHORIZATION).split(" ")[1];
     if (jwtService.isTokenExpired(jwtToken)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해주세요.");
+      return ResponseEntity.ok(ApiResponseUtil.failureResponse(HttpStatus.FORBIDDEN,"로그인 해주세요."));
     }
     Claims claims = jwtService.parseToken(jwtToken);
     if (claims.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그아웃 되었습니다. 다시 로그인 해주세요.");
+      return ResponseEntity.ok(ApiResponseUtil.failureResponse(HttpStatus.UNAUTHORIZED,"로그아웃 되었습니다. 다시 로그인 해주세요."));
     }
 
     String status = cartItemService.udateCartItem(Long.valueOf(cartId), Integer.valueOf(count));
 
     if ("200".equals(status)) {
-      return ResponseEntity.status(HttpStatus.OK).body("success");
+      return ResponseEntity.ok(ApiResponseUtil.successResponse(HttpStatus.OK, "상품 정보 수정 완료"));
     } else {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("아이템 정보가 없습니다.");
+      return ResponseEntity.ok(ApiResponseUtil.failureResponse(HttpStatus.NOT_FOUND, "아이템 정보를 확인해주세요."));
     }
 
   }

@@ -231,13 +231,13 @@
     }
   }
 
-  fetch(`http://localhost:8080/order/ordersheet`, {
-    method: "POST",
-    headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
-    body: resultData,
-  }).catch(error => {
-    console.log(error);
-  });
+  // fetch(`http://localhost:8080/order/ordersheet`, {
+  //   method: "POST",
+  //   headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
+  //   body: resultData,
+  // }).catch(error => {
+  //   console.log(error);
+  // });
 
   // 장바구니 상품 추가
   function addCart() {
@@ -285,12 +285,16 @@
           }
           return response.json();
         })
-        .then(data => {
-          alert("장바구니 추가")
-          console.log(data); // 서버로부터 받은 데이터 로깅
-          let gctuuid = data.id;
-          sessionStorage.setItem("gctuuid", gctuuid);
-          retrieveBasket();
+        .then(resData => {
+          if(resData.resultCode == "200"){
+            alert("장바구니 추가");
+            console.log(resData.data);
+            let gctuuid = resData.data.id;
+            sessionStorage.setItem("gctuuid", gctuuid);
+            retrieveBasket();
+          }else {
+            alert(resData.errorMessage);
+          }
         })
         .catch(err => {
           console.error('There was a problem with the fetch operation:', err);
@@ -332,25 +336,21 @@
           console.log(res.status);
           if (res.status === 200) {
             return res.json();
-          }else if(res.status === 204){
-            alert("장바구니가 비어 있습니다.");
-            window.location.href = "/cartView";
-            return;
-        }else if(res.status === 400){
-            alert("장바구니가 비어 있습니다.");
-            window.location.href = "/cartView";
-            return;
-          } else if(res.status === 403){
-            alert("로그인 정보를 확인해주세요.");
-            return ;
           } else {
             throw new Error("네트워크 오류 발생");
           }
-        }).then(data => {
-          if(data){
-            displayCartItems(data); // 테이블에 장바구니 항목 표시
-            calculateCartItemTotalPrice();
-          }
+        }).then(resData => {
+
+        if(resData.resultCode === "200"){
+          displayCartItems(resData.data); // 테이블에 장바구니 항목 표시
+          calculateCartItemTotalPrice();
+        } else if(resData.resultCode === "204"){
+          alert(resData.data);
+          window.location.href = "/cartView";
+          return;
+        }else {
+          alert(resData.errorMessage);
+        }
       })
         .catch(error => {
           console.log(error.message);
@@ -432,16 +432,18 @@
           method: "GET",
           headers: headers, // 헤더에 JWT 토큰을 포함시킵니다.
         })
-          .then(res => {
-            if(res.ok){
-              alert("저장 완료");
-              retrieveBasket()
-            }else if (res.status === 404){
-              throw new Error("아이템 정보를 확인해주세요.");
-            } else if(res.status === 403){
-              throw new Error("로그인 해주세요.");
-            } else if (res.status === 401) {
-              throw new Error("로그인 정보를 확인해주세요.");
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch data');
+            }
+            return response.json();
+          })
+          .then(resData => {
+            if(resData.resultCode === "200"){
+              alert(resData.data);
+              retrieveBasket();
+            }else {
+              alert(resData.errorMessage);
             }
           })
           .catch(err => {
@@ -450,7 +452,6 @@
       }
 
     }
-
 
     // 장바구니 상품 제거
     function deleteCartItem(cartId) {

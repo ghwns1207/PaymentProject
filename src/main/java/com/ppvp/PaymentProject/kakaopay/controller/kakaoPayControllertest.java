@@ -1,7 +1,6 @@
 package com.ppvp.PaymentProject.kakaopay.controller;
 
-import com.ppvp.PaymentProject.Api;
-import com.ppvp.PaymentProject.kakaopay.model.KakaoApproveResponse;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.kakaopay.service.KakaoPayService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

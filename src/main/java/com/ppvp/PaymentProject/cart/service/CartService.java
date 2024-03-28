@@ -7,9 +7,13 @@ import com.ppvp.PaymentProject.cart.repository.CartItemRepository;
 import com.ppvp.PaymentProject.cart.repository.CartRepository;
 import com.ppvp.PaymentProject.kakaoLogin.repository.KakaoLoginRepository;
 import com.ppvp.PaymentProject.userModel.User;
+import com.ppvp.PaymentProject.utils.Api;
+import com.ppvp.PaymentProject.utils.ApiResponseUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,14 +32,13 @@ public class CartService {
 
   private final CartItemRepository cartItemRepository;
 
-  public Cart addCartTable(CartModel model, Long userId) {
+  public Api addCartTable(CartModel model, Long userId) {
 
     Optional<User> userOptional = kakaoLoginRepository.findByIdAndWithdrawnIsFalse(userId);
 
     log.info("userid : {}" ,userOptional.get().getUserId());
     if(userOptional.isEmpty()){
-      // 유저 정보가 없는 경우
-      throw new RuntimeException("유저 정보가 없습니다.");
+      return ApiResponseUtil.failureResponse(HttpStatus.NOT_FOUND, "로그인을 확인해주세요.");
     }
     log.info("userOptional : {}" ,userOptional.get());
     // userId를 사용하여 해당 유저의 카트를 찾습니다.
@@ -58,7 +61,8 @@ public class CartService {
     Cart saveCart = cartRepository.save(cart);
 
     if (saveCart == null) {
-      throw new RuntimeException("Cart save error");
+      return ApiResponseUtil.failureResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+          "장바구니 저장 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
 
     // 아이템 이름,타입으로 프로덕트 테이블에서 id 검색
@@ -68,15 +72,15 @@ public class CartService {
 
     CartItem savedCartItem = cartItemRepository.save(cartItem);
     if(savedCartItem == null){
-      throw new RuntimeException("아이템 저장 에러");
+      return ApiResponseUtil.failureResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+          "서버에 에러가 있습니다. 잠시 후 다시 시도해주세요.");
     }
 //    cart.getCartItemDto().add(savedCartItem);
     log.info("savedCartItem : {}" , savedCartItem);
-    return saveCart;
+    return ApiResponseUtil.successResponse(HttpStatus.OK,saveCart);
   }
 
   public Cart getCartId(Long userId){
-
 //    Optional<User> userOptional = kakaoLoginRepository.findByUserId(userId);
    Optional<Cart> cartDto = cartRepository.findCartByUser_Id(userId);
     log.info("cart : {}", cartDto);

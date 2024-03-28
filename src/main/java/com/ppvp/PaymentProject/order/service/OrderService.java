@@ -1,6 +1,6 @@
 package com.ppvp.PaymentProject.order.service;
 
-import com.ppvp.PaymentProject.Api;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddress;
 import com.ppvp.PaymentProject.deliveryAddress.repository.DeliveryAddressRepository;
 import com.ppvp.PaymentProject.kakaoLogin.repository.KakaoLoginRepository;

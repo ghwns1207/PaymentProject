@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Builder
@@ -26,9 +28,7 @@ public class ProductOptionDetails {
   @Column(name = "detail_option_name", nullable = false)
   private String detailOptionName;      // 옵션 상세 이름
 
-  @Column(name = "additional_cost" ,nullable = false)
-  private Integer additionalFee;       // 추가 금액
-
-
+  @Column(name = "additional_fee" ,nullable = false)
+  private Integer additional_fee;       // 추가 금액
 
 }

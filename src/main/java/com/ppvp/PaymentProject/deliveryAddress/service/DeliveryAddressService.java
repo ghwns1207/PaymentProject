@@ -1,6 +1,6 @@
 package com.ppvp.PaymentProject.deliveryAddress.service;
 
-import com.ppvp.PaymentProject.Api;
+import com.ppvp.PaymentProject.utils.Api;
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddress;
 import com.ppvp.PaymentProject.deliveryAddress.Model.DeliveryAddressModel;
 import com.ppvp.PaymentProject.deliveryAddress.repository.DeliveryAddressRepository;

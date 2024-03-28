@@ -13,10 +13,10 @@ import java.util.Optional;
 public interface KakaoLoginRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByIdAndWithdrawnIsFalse (Long id);
-  Optional<User> findByUserIdAndWithdrawnIsFalse(Long userId);
+  Optional<User> findByUserIdAndWithdrawnIsFalse(String  userId);
 
   User save(User user);
 
-  Integer deleteByUserId(Long userId);
+  Integer deleteByUserId(String userId);
 
 }
